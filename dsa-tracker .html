@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Sheet — Track & Solve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c0e;
+    --panel:#141518;
+    --panel-2:#1b1d21;
+    --border:#2a2c31;
+    --text:#eceae4;
+    --text-dim:#96959c;
+    --accent:#ff9d4d;
+    --accent-dim:#8a5a33;
+    --teal:#7dd3c0;
+    --easy:#5fbf82;
+    --medium:#e8b23d;
+    --hard:#e2685f;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  code,pre,.mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--accent-dim);}
+
+  #app{max-width:960px;margin:0 auto;padding:32px 20px 80px;}
+
+  /* ---------- Header ---------- */
+  .top{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-bottom:36px;flex-wrap:wrap;gap:8px;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand .mark{
+    width:10px;height:10px;border-radius:2px;background:var(--accent);
+    display:inline-block;transform:translateY(-2px);
+  }
+  .brand h1{font-size:22px;margin:0;font-weight:600;letter-spacing:-0.01em;}
+  .top p{color:var(--text-dim);font-size:13px;margin:4px 0 0;}
+
+  /* ---------- Home: topic rail ---------- */
+  .rail{position:relative;padding-left:28px;}
+  .rail::before{
+    content:"";position:absolute;left:9px;top:14px;bottom:14px;width:1px;
+    background:linear-gradient(var(--border), var(--border) 90%, transparent);
+  }
+  .topic-card{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:10px;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .topic-card:hover{border-color:#3a3d44;transform:translateX(2px);}
+  .topic-card::before{
+    content:attr(data-idx);
+    position:absolute;left:-28px;top:50%;transform:translateY(-50%);
+    width:20px;height:20px;border-radius:50%;
+    background:var(--bg);border:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .topic-card.has-data::before{border-color:var(--accent);color:var(--accent);}
+  .topic-main .name{font-size:15px;font-weight:500;}
+  .topic-main .meta{font-size:12px;color:var(--text-dim);margin-top:4px;}
+  .topic-main .meta.ready{color:var(--teal);}
+  .chev{color:var(--text-dim);font-size:18px;flex-shrink:0;}
+
+  /* ---------- Topic view ---------- */
+  .subhead{
+    position:sticky;top:0;background:var(--bg);padding:10px 0 16px;z-index:5;
+    border-bottom:1px solid var(--border);margin-bottom:20px;
+  }
+  .back-btn{
+    background:none;border:none;color:var(--text-dim);font-size:13px;cursor:pointer;
+    display:flex;align-items:center;gap:6px;padding:0;margin-bottom:10px;font-family:'Inter';
+  }
+  .back-btn:hover{color:var(--text);}
+  .subhead h2{font-size:20px;margin:0 0 12px;font-weight:600;}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .chip{
+    border:1px solid var(--border);background:var(--panel);color:var(--text-dim);
+    font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;
+    font-family:'Inter';transition:all .15s ease;
+  }
+  .chip.active{border-color:var(--accent);color:var(--accent);background:rgba(255,157,77,.08);}
+  .chip:hover:not(.active){border-color:#3a3d44;color:var(--text);}
+  .search{
+    margin-left:auto;background:var(--panel);border:1px solid var(--border);
+    border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text);
+    min-width:180px;font-family:'Inter';
+  }
+  .search:focus{outline:none;border-color:var(--teal);}
+
+  .section-title{
+    font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);
+    margin:26px 0 10px;font-weight:600;
+  }
+  .section-title:first-child{margin-top:0;}
+
+  .q-row{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:8px;overflow:hidden;
+  }
+  .q-head{
+    display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;
+  }
+  .q-head:hover{background:var(--panel-2);}
+  .q-name{flex:1;font-size:14px;}
+  .badge{
+    font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;
+    text-transform:uppercase;letter-spacing:.03em;flex-shrink:0;
+  }
+  .lc-tag{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--teal);
+    background:rgba(125,211,192,.1);border:1px solid rgba(125,211,192,.25);
+    padding:2px 7px;border-radius:5px;flex-shrink:0;white-space:nowrap;
+  }
+  .badge-easy{color:var(--easy);background:rgba(95,191,130,.12);}
+  .badge-medium{color:var(--medium);background:rgba(232,178,61,.12);}
+  .badge-hard{color:var(--hard);background:rgba(226,104,95,.12);}
+  .q-arrow{color:var(--text-dim);font-size:12px;transition:transform .15s ease;flex-shrink:0;}
+  .q-row.open .q-arrow{transform:rotate(90deg);}
+
+  .q-body{border-top:1px solid var(--border);padding:16px;display:none;}
+  .q-row.open .q-body{display:block;}
+
+  .approach-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .a-tab{
+    border:1px solid var(--border);background:var(--bg);color:var(--text-dim);
+    font-size:11.5px;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:'Inter';
+  }
+  .a-tab.active{border-color:var(--accent);color:var(--accent);}
+  .a-tab .tag{color:var(--teal);font-family:'JetBrains Mono';font-size:10.5px;}
+  .a-tab.active .tag{color:var(--accent);}
+
+  .code-wrap{position:relative;}
+  .code-topic{font-size:11px;color:var(--text-dim);margin-bottom:6px;}
+  .code-topic b{color:var(--teal);font-weight:500;}
+  pre.code-block{
+    background:#0e0f11;border:1px solid var(--border);border-radius:8px;
+    padding:14px 16px;overflow-x:auto;font-size:12.5px;line-height:1.6;margin:0;
+  }
+  .copy-btn{
+    position:absolute;top:10px;right:10px;background:var(--panel-2);border:1px solid var(--border);
+    color:var(--text-dim);font-size:10.5px;padding:4px 9px;border-radius:5px;cursor:pointer;font-family:'Inter';
+  }
+  .copy-btn:hover{color:var(--text);}
+  .note{font-size:12px;color:var(--text-dim);margin-top:10px;}
+
+  .kw{color:#c586c0;} .tp{color:#4ec9b0;} .str{color:#ce9178;} .num{color:#b5cea8;} .cm{color:#6a9955;} .fn{color:#dcdcaa;}
+
+  .empty-state{
+    border:1px dashed var(--border);border-radius:var(--radius);padding:30px 20px;
+    text-align:center;color:var(--text-dim);font-size:13px;
+  }
+  .no-results{color:var(--text-dim);font-size:13px;padding:20px 0;}
+
+  @media (max-width:560px){
+    .search{margin-left:0;width:100%;}
+    .subhead h2{font-size:18px;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ======================= DATA ======================= */
+/* Each question: { name, difficulty: 'Easy'|'Medium'|'Hard', approaches: [ {label, topic, code} ] }
+   If approaches.length === 1, the optimal approach IS the under-topic approach — only one panel is shown.
+   If approaches.length === 2, approaches[0] is the optimal (interview-preferred) one. */
+
+const TOPICS = [
+  {
+    id:'sorting', title:'Learn Important Sorting Techniques', total:7,
+    sections:[
+      { name:'Sorting-I', questions:[
+        { name:'Selection Sort', difficulty:'Easy', approaches:[
+          { label:'Optimal · Sorting', topic:'Sorting', code:
+`void selectionSort(vector<int>& arr){
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++){
+        int minIdx = i;
+        for(int j = i + 1; j < n; j++)
+            if(arr[j] < arr[minIdx]) minIdx = j;
+        swap(arr[i], arr[minIdx]);
+    }
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+        { name:'Bubble Sort', difficulty:'Easy', approaches:[
+          { label:'Optimal · Sorting', topic:'Sorting', code:
+`void bubbleSort(vector<int>& arr){
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++){
+        bool swapped = false;
+        for(int j = 0; j < n - 1 - i; j++){
+            if(arr[j] > arr[j + 1]){
+                swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        if(!swapped) break; // already sorted
+    }
+}
+// Time: O(n^2) worst, O(n) best   Space: O(1)` } ] },
+        { name:'Insertion Sort', difficulty:'Easy', approaches:[
+          { label:'Optimal · Sorting', topic:'Sorting', code:
+`void insertionSort(vector<int>& arr){
+    int n = arr.size();
+    for(int i = 1; i < n; i++){
+        int key = arr[i], j = i - 1;
+        while(j >= 0 && arr[j] > key){
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+      ]},
+      { name:'Sorting-II', questions:[
+        { name:'Merge Sorting', difficulty:'Medium', leetcode:912, approaches:[
+          { label:'Optimal · Sorting (Divide & Conquer)', topic:'Sorting', code:
+`void merge(vector<int>& arr, int l, int m, int r){
+    vector<int> temp;
+    int i = l, j = m + 1;
+    while(i <= m && j <= r){
+        if(arr[i] <= arr[j]) temp.push_back(arr[i++]);
+        else temp.push_back(arr[j++]);
+    }
+    while(i <= m) temp.push_back(arr[i++]);
+    while(j <= r) temp.push_back(arr[j++]);
+    for(int k = l; k <= r; k++) arr[k] = temp[k - l];
+}
+void mergeSort(vector<int>& arr, int l, int r){
+    if(l >= r) return;
+    int m = (l + r) / 2;
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+    merge(arr, l, m, r);
+}
+// Time: O(n log n)   Space: O(n)` } ] },
+        { name:'Recursive Bubble Sort', difficulty:'Easy', approaches:[
+          { label:'Optimal · Sorting (Recursion)', topic:'Sorting', code:
+`void recursiveBubbleSort(vector<int>& arr, int n){
+    if(n == 1) return;
+    for(int i = 0; i < n - 1; i++)
+        if(arr[i] > arr[i + 1]) swap(arr[i], arr[i + 1]);
+    recursiveBubbleSort(arr, n - 1);
+}
+// Time: O(n^2)   Space: O(n) recursion stack` } ] },
+        { name:'Recursive Insertion Sort', difficulty:'Easy', approaches:[
+          { label:'Optimal · Sorting (Recursion)', topic:'Sorting', code:
+`void recInsertionSort(vector<int>& arr, int n){
+    if(n <= 1) return;
+    recInsertionSort(arr, n - 1);
+    int last = arr[n - 1], j = n - 2;
+    while(j >= 0 && arr[j] > last){
+        arr[j + 1] = arr[j];
+        j--;
+    }
+    arr[j + 1] = last;
+}
+// Time: O(n^2)   Space: O(n) recursion stack` } ] },
+        { name:'Quick Sorting', difficulty:'Easy', leetcode:912, approaches:[
+          { label:'Optimal · Sorting (Divide & Conquer)', topic:'Sorting', code:
+`int partition(vector<int>& arr, int low, int high){
+    int pivot = arr[high], i = low - 1;
+    for(int j = low; j < high; j++)
+        if(arr[j] < pivot) swap(arr[++i], arr[j]);
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+void quickSort(vector<int>& arr, int low, int high){
+    if(low < high){
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+// Time: O(n log n) avg, O(n^2) worst   Space: O(log n)` } ] },
+      ]},
+    ]
+  },
+  {
+    id:'arrays', title:'Solve Problems on Arrays [Easy -> Medium -> Hard]', total:40,
+    sections:[
+      { name:'Easy', questions:[
+        { name:'Largest Element', difficulty:'Easy', approaches:[
+          { label:'Optimal · Linear Scan', topic:'Arrays', code:
+`int largestElement(vector<int>& arr){
+    int maxVal = arr[0];
+    for(int x : arr) maxVal = max(maxVal, x);
+    return maxVal;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Second Largest Element', difficulty:'Easy', approaches:[
+          { label:'Optimal · Single Pass', topic:'Arrays', code:
+`int secondLargest(vector<int>& arr){
+    int largest = INT_MIN, second = INT_MIN;
+    for(int x : arr){
+        if(x > largest){ second = largest; largest = x; }
+        else if(x > second && x != largest) second = x;
+    }
+    return second; // INT_MIN if it doesn't exist
+}
+// Time: O(n)   Space: O(1)   (no sorting needed)` } ] },
+        { name:'Check if the Array is Sorted II', difficulty:'Easy', leetcode:1752, approaches:[
+          { label:'Optimal · Single Pass (break-point count)', topic:'Arrays', code:
+`bool checkSortedAndRotated(vector<int>& arr){
+    int n = arr.size(), breaks = 0;
+    for(int i = 0; i < n; i++){
+        if(arr[i] > arr[(i + 1) % n]) breaks++;
+        if(breaks > 1) return false;
+    }
+    return true;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Remove duplicates from Sorted array', difficulty:'Easy', leetcode:26, approaches:[
+          { label:'Optimal · Two Pointer (in-place)', topic:'Arrays', code:
+`int removeDuplicates(vector<int>& arr){
+    int n = arr.size();
+    if(n == 0) return 0;
+    int i = 0;
+    for(int j = 1; j < n; j++){
+        if(arr[j] != arr[i]){
+            i++;
+            arr[i] = arr[j];
+        }
+    }
+    return i + 1; // new length
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Left Rotate Array by One', difficulty:'Easy', approaches:[
+          { label:'Optimal · Shift + Wrap', topic:'Arrays', code:
+`void rotateByOne(vector<int>& arr){
+    int n = arr.size();
+    int temp = arr[0];
+    for(int i = 1; i < n; i++) arr[i - 1] = arr[i];
+    arr[n - 1] = temp;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Left Rotate Array by K Places', difficulty:'Easy', leetcode:189, approaches:[
+          { label:'Optimal · Reversal Algorithm', topic:'Arrays', code:
+`void rotateByK(vector<int>& arr, int k){
+    int n = arr.size();
+    k = k % n;
+    reverse(arr.begin(), arr.begin() + k);
+    reverse(arr.begin() + k, arr.end());
+    reverse(arr.begin(), arr.end());
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Move Zeros to End', difficulty:'Easy', leetcode:283, approaches:[
+          { label:'Optimal · Two Pointer (in-place)', topic:'Arrays', code:
+`void moveZeroes(vector<int>& arr){
+    int n = arr.size(), j = -1;
+    for(int i = 0; i < n; i++) if(arr[i] == 0){ j = i; break; }
+    if(j == -1) return; // no zero present
+    for(int i = j + 1; i < n; i++)
+        if(arr[i] != 0) swap(arr[i], arr[j++]);
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Linear Search', difficulty:'Easy', approaches:[
+          { label:'Optimal · Linear Scan', topic:'Arrays', code:
+`int linearSearch(vector<int>& arr, int target){
+    for(int i = 0; i < (int)arr.size(); i++)
+        if(arr[i] == target) return i;
+    return -1;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Union of two sorted arrays', difficulty:'Easy', approaches:[
+          { label:'Optimal · Two Pointer Merge', topic:'Arrays', code:
+`vector<int> findUnion(vector<int>& a, vector<int>& b){
+    int i = 0, j = 0; vector<int> res;
+    while(i < (int)a.size() && j < (int)b.size()){
+        int val = (a[i] <= b[j]) ? a[i] : b[j];
+        if(res.empty() || res.back() != val) res.push_back(val);
+        if(a[i] <= b[j]) i++; else j++;
+    }
+    while(i < (int)a.size()){ if(res.empty() || res.back() != a[i]) res.push_back(a[i]); i++; }
+    while(j < (int)b.size()){ if(res.empty() || res.back() != b[j]) res.push_back(b[j]); j++; }
+    return res;
+}
+// Time: O(n + m)   Space: O(n + m) for the output` } ] },
+        { name:'Find missing number', difficulty:'Easy', leetcode:268, approaches:[
+          { label:'Optimal · Sum Formula', topic:'Arrays', code:
+`int missingNumber(vector<int>& arr, int n){
+    long long expected = (long long)n * (n + 1) / 2;
+    long long actual = 0;
+    for(int x : arr) actual += x;
+    return (int)(expected - actual);
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Hashing', topic:'Arrays', code:
+`int missingNumberBrute(vector<int>& arr, int n){
+    vector<int> seen(n + 1, 0);
+    for(int x : arr) seen[x] = 1;
+    for(int i = 0; i <= n; i++) if(!seen[i]) return i;
+    return -1;
+}
+// Time: O(n)   Space: O(n)  — optimal avoids the extra array` } ] },
+        { name:'Maximum Consecutive Ones', difficulty:'Easy', leetcode:485, approaches:[
+          { label:'Optimal · Single Pass', topic:'Arrays', code:
+`int findMaxConsecutiveOnes(vector<int>& arr){
+    int maxCount = 0, count = 0;
+    for(int x : arr){
+        if(x == 1){ count++; maxCount = max(maxCount, count); }
+        else count = 0;
+    }
+    return maxCount;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Find the number that appears once, and other numbers twice.', difficulty:'Medium', leetcode:136, approaches:[
+          { label:'Optimal · XOR', topic:'Bit Manipulation', code:
+`int singleNumber(vector<int>& arr){
+    int result = 0;
+    for(int x : arr) result ^= x; // pairs cancel out
+    return result;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Hashing', topic:'Arrays', code:
+`int singleNumberBrute(vector<int>& arr){
+    unordered_map<int,int> cnt;
+    for(int x : arr) cnt[x]++;
+    for(auto& [k, v] : cnt) if(v == 1) return k;
+    return -1;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:"Longest subarray with given sum K(positives)", difficulty:'Medium', approaches:[
+          { label:'Optimal · Sliding Window', topic:'Sliding Window', code:
+`int longestSubarraySumK(vector<int>& arr, int k){
+    int n = arr.size(), left = 0, sum = 0, maxLen = 0;
+    for(int right = 0; right < n; right++){
+        sum += arr[right];
+        while(sum > k && left <= right){ sum -= arr[left]; left++; }
+        if(sum == k) maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(1)   Works because all elements are positive` },
+          { label:'Brute Force · Nested Sum', topic:'Arrays', code:
+`int longestSubarraySumKBrute(vector<int>& arr, int k){
+    int n = arr.size(), maxLen = 0;
+    for(int i = 0; i < n; i++){
+        int sum = 0;
+        for(int j = i; j < n; j++){
+            sum += arr[j];
+            if(sum == k) maxLen = max(maxLen, j - i + 1);
+        }
+    }
+    return maxLen;
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+        { name:'Longest subarray with sum K', difficulty:'Medium', leetcode:325, approaches:[
+          { label:'Optimal · Prefix Sum + Hashing', topic:'Arrays', code:
+`int longestSubarraySumKGeneral(vector<int>& arr, int k){
+    unordered_map<int,int> firstIndex;
+    int sum = 0, maxLen = 0;
+    for(int i = 0; i < (int)arr.size(); i++){
+        sum += arr[i];
+        if(sum == k) maxLen = max(maxLen, i + 1);
+        if(firstIndex.count(sum - k)) maxLen = max(maxLen, i - firstIndex[sum - k]);
+        if(!firstIndex.count(sum)) firstIndex[sum] = i;
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(n)   Handles negative numbers too, unlike sliding window` } ] },
+      ]},
+      { name:'Medium', questions:[
+        { name:'Two Sum', difficulty:'Easy', leetcode:1, approaches:[
+          { label:'Optimal · Hashing', topic:'Arrays', code:
+`vector<int> twoSum(vector<int>& nums, int target){
+    unordered_map<int,int> seen;
+    for(int i = 0; i < (int)nums.size(); i++){
+        int need = target - nums[i];
+        if(seen.count(need)) return {seen[need], i};
+        seen[nums[i]] = i;
+    }
+    return {-1, -1};
+}
+// Time: O(n)   Space: O(n)` },
+          { label:'Brute Force · Nested Loop', topic:'Arrays', code:
+`vector<int> twoSumBrute(vector<int>& nums, int target){
+    int n = nums.size();
+    for(int i = 0; i < n; i++)
+        for(int j = i + 1; j < n; j++)
+            if(nums[i] + nums[j] == target) return {i, j};
+    return {-1, -1};
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+        { name:"Sort an array of 0's 1's and 2's", difficulty:'Medium', leetcode:75, approaches:[
+          { label:'Optimal · Dutch National Flag', topic:'Arrays', code:
+`void sortColors(vector<int>& arr){
+    int low = 0, mid = 0, high = arr.size() - 1;
+    while(mid <= high){
+        if(arr[mid] == 0){ swap(arr[low], arr[mid]); low++; mid++; }
+        else if(arr[mid] == 1) mid++;
+        else { swap(arr[mid], arr[high]); high--; }
+    }
+}
+// Time: O(n) single pass   Space: O(1)` } ] },
+        { name:'Majority Element-I', difficulty:'Easy', leetcode:169, approaches:[
+          { label:"Optimal · Boyer-Moore Voting", topic:'Arrays', code:
+`int majorityElement(vector<int>& arr){
+    int count = 0, candidate = 0;
+    for(int x : arr){
+        if(count == 0) candidate = x;
+        count += (x == candidate) ? 1 : -1;
+    }
+    return candidate; // guaranteed to exist per problem statement
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:"Kadane's Algorithm", difficulty:'Medium', leetcode:53, approaches:[
+          { label:"Optimal · Kadane's Algorithm", topic:'Arrays', code:
+`int maxSubArray(vector<int>& arr){
+    int maxSum = INT_MIN, sum = 0;
+    for(int x : arr){
+        sum += x;
+        maxSum = max(maxSum, sum);
+        if(sum < 0) sum = 0;
+    }
+    return maxSum;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · All Subarrays', topic:'Arrays', code:
+`int maxSubArrayBrute(vector<int>& arr){
+    int n = arr.size(), maxSum = INT_MIN;
+    for(int i = 0; i < n; i++){
+        int sum = 0;
+        for(int j = i; j < n; j++){
+            sum += arr[j];
+            maxSum = max(maxSum, sum);
+        }
+    }
+    return maxSum;
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+        { name:'Print subarray with maximum subarray sum (extended version of above problem)', difficulty:'Medium', approaches:[
+          { label:"Optimal · Extended Kadane's", topic:'Arrays', code:
+`pair<int,int> maxSubArrayIndices(vector<int>& arr){
+    int maxSum = INT_MIN, sum = 0, start = 0, bestL = 0, bestR = 0;
+    for(int i = 0; i < (int)arr.size(); i++){
+        if(sum == 0) start = i;
+        sum += arr[i];
+        if(sum > maxSum){ maxSum = sum; bestL = start; bestR = i; }
+        if(sum < 0) sum = 0;
+    }
+    return {bestL, bestR}; // subarray is arr[bestL..bestR]
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Stock Buy and Sell', difficulty:'Medium', leetcode:121, approaches:[
+          { label:'Optimal · Track Min Price', topic:'Arrays', code:
+`int maxProfit(vector<int>& prices){
+    int minPrice = INT_MAX, best = 0;
+    for(int p : prices){
+        minPrice = min(minPrice, p);
+        best = max(best, p - minPrice);
+    }
+    return best;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Rearrange array elements by sign', difficulty:'Medium', leetcode:2149, approaches:[
+          { label:'Optimal · Two Pointer Placement', topic:'Arrays', code:
+`vector<int> rearrangeBySign(vector<int>& arr){
+    int n = arr.size();
+    vector<int> res(n);
+    int posIdx = 0, negIdx = 1;
+    for(int x : arr){
+        if(x > 0){ res[posIdx] = x; posIdx += 2; }
+        else { res[negIdx] = x; negIdx += 2; }
+    }
+    return res;
+}
+// Time: O(n)   Space: O(n)   Assumes equal count of +ve and -ve elements` } ] },
+        { name:'Next Permutation', difficulty:'Medium', leetcode:31, approaches:[
+          { label:'Optimal · In-place Pivot + Reverse', topic:'Arrays', code:
+`void nextPermutation(vector<int>& arr){
+    int n = arr.size(), i = n - 2;
+    while(i >= 0 && arr[i] >= arr[i + 1]) i--;
+    if(i >= 0){
+        int j = n - 1;
+        while(arr[j] <= arr[i]) j--;
+        swap(arr[i], arr[j]);
+    }
+    reverse(arr.begin() + i + 1, arr.end());
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Generate All Permutations', topic:'Arrays', code:
+`void nextPermutationBrute(vector<int>& arr){
+    vector<int> sorted = arr;
+    sort(sorted.begin(), sorted.end());
+    vector<vector<int>> all;
+    do { all.push_back(sorted); } while(next_permutation(sorted.begin(), sorted.end()));
+    for(int i = 0; i < (int)all.size(); i++){
+        if(all[i] == arr){
+            arr = (i + 1 < (int)all.size()) ? all[i + 1] : all[0];
+            return;
+        }
+    }
+}
+// Time: O(n! * n)   Space: O(n! * n)` } ] },
+        { name:'Leaders in an Array', difficulty:'Medium', approaches:[
+          { label:'Optimal · Right-to-Left Scan', topic:'Arrays', code:
+`vector<int> leaders(vector<int>& arr){
+    vector<int> res;
+    int n = arr.size(), maxRight = INT_MIN;
+    for(int i = n - 1; i >= 0; i--){
+        if(arr[i] > maxRight){
+            res.push_back(arr[i]);
+            maxRight = arr[i];
+        }
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+// Time: O(n)   Space: O(n) for the output` } ] },
+        { name:'Longest Consecutive Sequence in an Array', difficulty:'Medium', leetcode:128, approaches:[
+          { label:'Optimal · HashSet', topic:'Arrays', code:
+`int longestConsecutive(vector<int>& arr){
+    unordered_set<int> st(arr.begin(), arr.end());
+    int longest = 0;
+    for(int x : st){
+        if(!st.count(x - 1)){ // x starts a sequence
+            int len = 1;
+            while(st.count(x + len)) len++;
+            longest = max(longest, len);
+        }
+    }
+    return longest;
+}
+// Time: O(n)   Space: O(n)` },
+          { label:'Brute Force · Sorting', topic:'Arrays', code:
+`int longestConsecutiveBrute(vector<int>& arr){
+    if(arr.empty()) return 0;
+    sort(arr.begin(), arr.end());
+    int longest = 1, cur = 1;
+    for(int i = 1; i < (int)arr.size(); i++){
+        if(arr[i] == arr[i - 1]) continue;
+        cur = (arr[i] == arr[i - 1] + 1) ? cur + 1 : 1;
+        longest = max(longest, cur);
+    }
+    return longest;
+}
+// Time: O(n log n)   Space: O(1) extra` } ] },
+        { name:'Set Matrix Zeroes', difficulty:'Medium', leetcode:73, approaches:[
+          { label:'Optimal · First Row/Col as Markers', topic:'Arrays', code:
+`void setZeroes(vector<vector<int>>& mat){
+    int n = mat.size(), m = mat[0].size(), col0 = 1;
+    for(int i = 0; i < n; i++){
+        if(mat[i][0] == 0) col0 = 0;
+        for(int j = 1; j < m; j++)
+            if(mat[i][j] == 0){ mat[i][0] = 0; mat[0][j] = 0; }
+    }
+    for(int i = n - 1; i >= 0; i--){
+        for(int j = m - 1; j >= 1; j--)
+            if(mat[i][0] == 0 || mat[0][j] == 0) mat[i][j] = 0;
+        if(col0 == 0) mat[i][0] = 0;
+    }
+}
+// Time: O(n*m)   Space: O(1)` },
+          { label:'Brute Force · Extra Copy', topic:'Arrays', code:
+`void setZeroesBrute(vector<vector<int>>& mat){
+    int n = mat.size(), m = mat[0].size();
+    vector<vector<int>> copy = mat;
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            if(copy[i][j] == 0){
+                for(int k = 0; k < m; k++) mat[i][k] = 0;
+                for(int k = 0; k < n; k++) mat[k][j] = 0;
+            }
+}
+// Time: O(n*m*(n+m))   Space: O(n*m)` } ] },
+        { name:'Rotate matrix by 90 degrees', difficulty:'Medium', leetcode:48, approaches:[
+          { label:'Optimal · Transpose + Reverse Rows', topic:'Arrays', code:
+`void rotate(vector<vector<int>>& mat){
+    int n = mat.size();
+    for(int i = 0; i < n; i++)
+        for(int j = i + 1; j < n; j++)
+            swap(mat[i][j], mat[j][i]);
+    for(int i = 0; i < n; i++)
+        reverse(mat[i].begin(), mat[i].end());
+}
+// Time: O(n^2)   Space: O(1) in-place` } ] },
+        { name:'Print the matrix in spiral manner', difficulty:'Medium', leetcode:54, approaches:[
+          { label:'Optimal · Boundary Simulation', topic:'Arrays', code:
+`vector<int> spiralOrder(vector<vector<int>>& mat){
+    vector<int> res;
+    int top = 0, bottom = mat.size() - 1, left = 0, right = mat[0].size() - 1;
+    while(top <= bottom && left <= right){
+        for(int j = left; j <= right; j++) res.push_back(mat[top][j]);
+        top++;
+        for(int i = top; i <= bottom; i++) res.push_back(mat[i][right]);
+        right--;
+        if(top <= bottom){
+            for(int j = right; j >= left; j--) res.push_back(mat[bottom][j]);
+            bottom--;
+        }
+        if(left <= right){
+            for(int i = bottom; i >= top; i--) res.push_back(mat[i][left]);
+            left++;
+        }
+    }
+    return res;
+}
+// Time: O(n*m)   Space: O(1) extra (excluding output)` } ] },
+        { name:'Count subarrays with given sum', difficulty:'Medium', leetcode:560, approaches:[
+          { label:'Optimal · Prefix Sum + Hashing', topic:'Arrays', code:
+`int subarraySum(vector<int>& arr, int k){
+    unordered_map<int,int> freq;
+    freq[0] = 1;
+    int sum = 0, count = 0;
+    for(int x : arr){
+        sum += x;
+        if(freq.count(sum - k)) count += freq[sum - k];
+        freq[sum]++;
+    }
+    return count;
+}
+// Time: O(n)   Space: O(n)   Works with negative numbers too` } ] },
+      ]},
+      { name:'Hard', questions:[
+        { name:"Pascal's Triangle I", difficulty:'Easy', leetcode:118, approaches:[
+          { label:'Optimal · Row-by-Row Build', topic:'Arrays', code:
+`vector<vector<int>> generatePascal(int n){
+    vector<vector<int>> res(n);
+    for(int i = 0; i < n; i++){
+        res[i].resize(i + 1);
+        res[i][0] = res[i][i] = 1;
+        for(int j = 1; j < i; j++)
+            res[i][j] = res[i - 1][j - 1] + res[i - 1][j];
+    }
+    return res;
+}
+// Time: O(n^2)   Space: O(n^2) for the output` } ] },
+        { name:'Majority Element-II', difficulty:'Hard', leetcode:229, approaches:[
+          { label:'Optimal · Extended Boyer-Moore', topic:'Arrays', code:
+`vector<int> majorityElementII(vector<int>& arr){
+    int cnt1 = 0, cnt2 = 0, el1 = INT_MIN, el2 = INT_MIN;
+    for(int x : arr){
+        if(cnt1 == 0 && el2 != x){ cnt1 = 1; el1 = x; }
+        else if(cnt2 == 0 && el1 != x){ cnt2 = 1; el2 = x; }
+        else if(x == el1) cnt1++;
+        else if(x == el2) cnt2++;
+        else { cnt1--; cnt2--; }
+    }
+    cnt1 = cnt2 = 0;
+    for(int x : arr){
+        if(x == el1) cnt1++;
+        if(x == el2) cnt2++;
+    }
+    vector<int> res;
+    int n = arr.size();
+    if(cnt1 > n / 3) res.push_back(el1);
+    if(cnt2 > n / 3) res.push_back(el2);
+    return res;
+}
+// Time: O(n)   Space: O(1)   At most 2 elements can appear > n/3 times` } ] },
+        { name:'3 Sum', difficulty:'Medium', leetcode:15, approaches:[
+          { label:'Optimal · Sort + Two Pointer', topic:'Arrays', code:
+`vector<vector<int>> threeSum(vector<int>& arr){
+    sort(arr.begin(), arr.end());
+    int n = arr.size();
+    vector<vector<int>> res;
+    for(int i = 0; i < n; i++){
+        if(i > 0 && arr[i] == arr[i - 1]) continue;
+        int j = i + 1, k = n - 1;
+        while(j < k){
+            long long sum = (long long)arr[i] + arr[j] + arr[k];
+            if(sum < 0) j++;
+            else if(sum > 0) k--;
+            else {
+                res.push_back({arr[i], arr[j], arr[k]});
+                j++; k--;
+                while(j < k && arr[j] == arr[j - 1]) j++;
+                while(j < k && arr[k] == arr[k + 1]) k--;
+            }
+        }
+    }
+    return res;
+}
+// Time: O(n^2)   Space: O(1) extra (excluding output)` },
+          { label:'Brute Force · Triple Loop + Set', topic:'Arrays', code:
+`vector<vector<int>> threeSumBrute(vector<int>& arr){
+    int n = arr.size();
+    set<vector<int>> res;
+    for(int i = 0; i < n; i++)
+        for(int j = i + 1; j < n; j++)
+            for(int k = j + 1; k < n; k++)
+                if(arr[i] + arr[j] + arr[k] == 0){
+                    vector<int> t = {arr[i], arr[j], arr[k]};
+                    sort(t.begin(), t.end());
+                    res.insert(t);
+                }
+    return vector<vector<int>>(res.begin(), res.end());
+}
+// Time: O(n^3 log n)   Space: O(unique triplets)` } ] },
+        { name:'4 Sum', difficulty:'Medium', leetcode:18, approaches:[
+          { label:'Optimal · Sort + Two Pointer', topic:'Arrays', code:
+`vector<vector<int>> fourSum(vector<int>& arr, int target){
+    sort(arr.begin(), arr.end());
+    int n = arr.size();
+    vector<vector<int>> res;
+    for(int i = 0; i < n; i++){
+        if(i > 0 && arr[i] == arr[i - 1]) continue;
+        for(int j = i + 1; j < n; j++){
+            if(j > i + 1 && arr[j] == arr[j - 1]) continue;
+            int l = j + 1, r = n - 1;
+            while(l < r){
+                long long sum = (long long)arr[i] + arr[j] + arr[l] + arr[r];
+                if(sum < target) l++;
+                else if(sum > target) r--;
+                else {
+                    res.push_back({arr[i], arr[j], arr[l], arr[r]});
+                    l++; r--;
+                    while(l < r && arr[l] == arr[l - 1]) l++;
+                    while(l < r && arr[r] == arr[r + 1]) r--;
+                }
+            }
+        }
+    }
+    return res;
+}
+// Time: O(n^3)   Space: O(1) extra (excluding output)` } ] },
+        { name:'Largest Subarray with Sum 0', difficulty:'Medium', approaches:[
+          { label:'Optimal · Prefix Sum + Hashing', topic:'Arrays', code:
+`int maxLenZeroSum(vector<int>& arr){
+    unordered_map<int,int> firstIndex;
+    int sum = 0, maxLen = 0;
+    for(int i = 0; i < (int)arr.size(); i++){
+        sum += arr[i];
+        if(sum == 0) maxLen = i + 1;
+        else if(firstIndex.count(sum)) maxLen = max(maxLen, i - firstIndex[sum]);
+        else firstIndex[sum] = i;
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Count subarrays with given xor K', difficulty:'Hard', approaches:[
+          { label:'Optimal · Prefix XOR + Hashing', topic:'Arrays', code:
+`int subarraysXor(vector<int>& arr, int k){
+    unordered_map<int,int> freq;
+    freq[0] = 1;
+    int xr = 0, count = 0;
+    for(int x : arr){
+        xr ^= x;
+        if(freq.count(xr ^ k)) count += freq[xr ^ k];
+        freq[xr]++;
+    }
+    return count;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Merge Overlapping Subintervals', difficulty:'Medium', leetcode:56, approaches:[
+          { label:'Optimal · Sort + Merge', topic:'Arrays', code:
+`vector<vector<int>> mergeIntervals(vector<vector<int>>& intervals){
+    sort(intervals.begin(), intervals.end());
+    vector<vector<int>> res;
+    for(auto& iv : intervals){
+        if(res.empty() || res.back()[1] < iv[0]) res.push_back(iv);
+        else res.back()[1] = max(res.back()[1], iv[1]);
+    }
+    return res;
+}
+// Time: O(n log n)   Space: O(n) for the output` } ] },
+        { name:'Merge two sorted arrays without extra space', difficulty:'Medium', approaches:[
+          { label:'Optimal · Gap Method (Shell-sort style)', topic:'Arrays', code:
+`void mergeNoSpace(vector<int>& a, vector<int>& b){
+    int n = a.size(), m = b.size();
+    int gap = (n + m + 1) / 2;
+    while(gap > 0){
+        int i = 0, j = gap;
+        while(j < n + m){
+            int ai = (i < n) ? a[i] : b[i - n];
+            int aj = (j < n) ? a[j] : b[j - n];
+            if(ai > aj){
+                if(i < n && j < n) swap(a[i], a[j]);
+                else if(i < n && j >= n) swap(a[i], b[j - n]);
+                else swap(b[i - n], b[j - n]);
+            }
+            i++; j++;
+        }
+        if(gap == 1) break;
+        gap = (gap + 1) / 2;
+    }
+}
+// Time: O((n+m) log(n+m))   Space: O(1)` } ] },
+        { name:'Find the repeating and missing number', difficulty:'Hard', approaches:[
+          { label:'Optimal · Sum & Sum-of-Squares Math', topic:'Arrays', code:
+`pair<int,int> findRepeatingMissing(vector<int>& arr){
+    long long n = arr.size();
+    long long sum = 0, sumSq = 0;
+    long long expSum = n * (n + 1) / 2;
+    long long expSumSq = n * (n + 1) * (2 * n + 1) / 6;
+    for(int x : arr){ sum += x; sumSq += (long long)x * x; }
+    long long diffSum = sum - expSum;          // repeating - missing
+    long long diffSumSq = sumSq - expSumSq;    // repeating^2 - missing^2
+    long long sumRM = diffSumSq / diffSum;     // repeating + missing
+    long long repeating = (diffSum + sumRM) / 2;
+    long long missing = repeating - diffSum;
+    return {(int)repeating, (int)missing};
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Count Inversions', difficulty:'Hard', approaches:[
+          { label:'Optimal · Merge Sort', topic:'Arrays', code:
+`long long merge(vector<int>& arr, int l, int m, int r){
+    vector<int> temp;
+    int i = l, j = m + 1;
+    long long count = 0;
+    while(i <= m && j <= r){
+        if(arr[i] <= arr[j]) temp.push_back(arr[i++]);
+        else { count += (m - i + 1); temp.push_back(arr[j++]); }
+    }
+    while(i <= m) temp.push_back(arr[i++]);
+    while(j <= r) temp.push_back(arr[j++]);
+    for(int k = l; k <= r; k++) arr[k] = temp[k - l];
+    return count;
+}
+long long countInversions(vector<int>& arr, int l, int r){
+    if(l >= r) return 0;
+    int m = (l + r) / 2;
+    long long count = countInversions(arr, l, m) + countInversions(arr, m + 1, r);
+    count += merge(arr, l, m, r);
+    return count;
+}
+// Time: O(n log n)   Space: O(n)` } ] },
+        { name:'Reverse Pairs', difficulty:'Hard', leetcode:493, approaches:[
+          { label:'Optimal · Merge Sort', topic:'Arrays', code:
+`int countPairs(vector<int>& arr, int l, int m, int r){
+    int cnt = 0, j = m + 1;
+    for(int i = l; i <= m; i++){
+        while(j <= r && (long long)arr[i] > 2LL * arr[j]) j++;
+        cnt += (j - (m + 1));
+    }
+    return cnt;
+}
+void mergeRP(vector<int>& arr, int l, int m, int r){
+    vector<int> temp;
+    int i = l, j = m + 1;
+    while(i <= m && j <= r){
+        if(arr[i] <= arr[j]) temp.push_back(arr[i++]);
+        else temp.push_back(arr[j++]);
+    }
+    while(i <= m) temp.push_back(arr[i++]);
+    while(j <= r) temp.push_back(arr[j++]);
+    for(int k = l; k <= r; k++) arr[k] = temp[k - l];
+}
+int reversePairs(vector<int>& arr, int l, int r){
+    if(l >= r) return 0;
+    int m = (l + r) / 2;
+    int count = reversePairs(arr, l, m) + reversePairs(arr, m + 1, r);
+    count += countPairs(arr, l, m, r);
+    mergeRP(arr, l, m, r);
+    return count;
+}
+// Time: O(n log n)   Space: O(n)` } ] },
+        { name:'Maximum Product Subarray in an Array', difficulty:'Hard', leetcode:152, approaches:[
+          { label:'Optimal · Prefix-Suffix Product', topic:'Arrays', code:
+`int maxProduct(vector<int>& arr){
+    int n = arr.size();
+    int prefix = 1, suffix = 1, result = INT_MIN;
+    for(int i = 0; i < n; i++){
+        if(prefix == 0) prefix = 1;
+        if(suffix == 0) suffix = 1;
+        prefix *= arr[i];
+        suffix *= arr[n - 1 - i];
+        result = max({result, prefix, suffix});
+    }
+    return result;
+}
+// Time: O(n)   Space: O(1)   Handles zeros and negative numbers` },
+          { label:'Brute Force · All Subarrays', topic:'Arrays', code:
+`int maxProductBrute(vector<int>& arr){
+    int n = arr.size(), result = INT_MIN;
+    for(int i = 0; i < n; i++){
+        int prod = 1;
+        for(int j = i; j < n; j++){
+            prod *= arr[j];
+            result = max(result, prod);
+        }
+    }
+    return result;
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+      ]},
+    ]
+  },
+  { id:'binary-search', title:'Binary Search [1D, 2D Arrays, Search Space]', total:32, sections:[] },
+  { id:'strings-basic', title:'Strings [Basic and Medium]', total:15, sections:[] },
+  { id:'linkedlist', title:'Learn LinkedList [Single LL, Double LL, Medium, Hard Problems]', total:31, sections:[] },
+  {
+    id:'recursion', title:'Recursion [PatternWise]', total:25,
+    sections:[
+      { name:'Get a Strong Hold', questions:[
+        { name:'Recursive Implementation of atoi()', difficulty:'Medium', leetcode:8, approaches:[
+          { label:'Optimal · Iterative Parsing', topic:'String Parsing', code:
+`int myAtoi(string s){
+    int i = 0, n = s.size();
+    while(i < n && s[i] == ' ') i++;
+    int sign = 1;
+    if(i < n && (s[i] == '+' || s[i] == '-')){
+        if(s[i] == '-') sign = -1;
+        i++;
+    }
+    long res = 0;
+    while(i < n && isdigit(s[i])){
+        res = res * 10 + (s[i] - '0');
+        if(res * sign > INT_MAX) return INT_MAX;
+        if(res * sign < INT_MIN) return INT_MIN;
+        i++;
+    }
+    return (int)(res * sign);
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Recursion (as under this topic)', topic:'Recursion', code:
+`int atoiHelper(const string& s, int i, int n, long res, int sign){
+    if(i == n || !isdigit(s[i])) return (int)(res * sign);
+    res = res * 10 + (s[i] - '0');
+    if(res * sign > INT_MAX) return INT_MAX;
+    if(res * sign < INT_MIN) return INT_MIN;
+    return atoiHelper(s, i + 1, n, res, sign);
+}
+int myAtoiRec(string s){
+    int i = 0, n = s.size();
+    while(i < n && s[i] == ' ') i++;
+    int sign = 1;
+    if(i < n && (s[i] == '+' || s[i] == '-')){
+        if(s[i] == '-') sign = -1;
+        i++;
+    }
+    return atoiHelper(s, i, n, 0, sign);
+}
+// Time: O(n)   Space: O(n) recursion stack` } ] },
+        { name:'Pow(x, n)', difficulty:'Easy', leetcode:50, approaches:[
+          { label:'Optimal · Iterative Binary Exponentiation', topic:'Math / Bit Manipulation', code:
+`double myPow(double x, long long n){
+    if(n < 0){ x = 1 / x; n = -n; }
+    double result = 1;
+    while(n > 0){
+        if(n & 1) result *= x;
+        x *= x;
+        n >>= 1;
+    }
+    return result;
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Recursion (as under this topic)', topic:'Recursion', code:
+`double powRec(double x, long long n){
+    if(n == 0) return 1;
+    if(n < 0) return 1 / powRec(x, -n);
+    double half = powRec(x, n / 2);
+    return (n % 2 == 0) ? half * half : half * half * x;
+}
+// Time: O(log n)   Space: O(log n) recursion stack` } ] },
+        { name:'Count Good Numbers', difficulty:'Medium', leetcode:1922, approaches:[
+          { label:'Optimal · Recursion (Fast Exponentiation)', topic:'Recursion', code:
+`const long long MOD = 1e9 + 7;
+long long power(long long x, long long y){
+    long long res = 1; x %= MOD;
+    while(y > 0){
+        if(y & 1) res = res * x % MOD;
+        x = x * x % MOD;
+        y >>= 1;
+    }
+    return res;
+}
+int countGoodNumbers(long long n){
+    long long even = (n + 1) / 2, odd = n / 2; // even idx: 5 choices, odd idx: 4 choices
+    return (power(5, even) * power(4, odd)) % MOD;
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Sort a stack using recursion', difficulty:'Medium', approaches:[
+          { label:'Optimal · Recursion', topic:'Recursion', code:
+`void insertSorted(stack<int>& st, int x){
+    if(st.empty() || st.top() <= x){ st.push(x); return; }
+    int top = st.top(); st.pop();
+    insertSorted(st, x);
+    st.push(top);
+}
+void sortStack(stack<int>& st){
+    if(st.empty()) return;
+    int top = st.top(); st.pop();
+    sortStack(st);
+    insertSorted(st, top);
+}
+// Time: O(n^2)   Space: O(n) recursion stack` } ] },
+        { name:'Reverse a Stack', difficulty:'Medium', approaches:[
+          { label:'Optimal · Recursion', topic:'Recursion', code:
+`void insertAtBottom(stack<int>& st, int x){
+    if(st.empty()){ st.push(x); return; }
+    int top = st.top(); st.pop();
+    insertAtBottom(st, x);
+    st.push(top);
+}
+void reverseStack(stack<int>& st){
+    if(st.empty()) return;
+    int top = st.top(); st.pop();
+    reverseStack(st);
+    insertAtBottom(st, top);
+}
+// Time: O(n^2)   Space: O(n) recursion stack` } ] },
+      ]},
+      { name:'Subsequences Pattern', questions:[
+        { name:'Generate Binary Strings Without Consecutive 1s', difficulty:'Medium', approaches:[
+          { label:'Optimal · Recursion', topic:'Recursion', code:
+`void genBinStrings(int n, string cur, vector<string>& res){
+    if((int)cur.size() == n){ res.push_back(cur); return; }
+    genBinStrings(n, cur + '0', res);
+    if(cur.empty() || cur.back() == '0') genBinStrings(n, cur + '1', res);
+}
+// Time: O(2^n)   Space: O(n) recursion stack` } ] },
+        { name:'Generate Parentheses', difficulty:'Medium', leetcode:22, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(int open, int close, string cur, vector<string>& res){
+    if(open == 0 && close == 0){ res.push_back(cur); return; }
+    if(open > 0) solve(open - 1, close, cur + '(', res);
+    if(close > open) solve(open, close - 1, cur + ')', res);
+}
+vector<string> generateParenthesis(int n){
+    vector<string> res;
+    solve(n, n, "", res);
+    return res;
+}
+// Time: O(4^n / sqrt(n))   Space: O(n) recursion stack` } ] },
+        { name:'Power Set', difficulty:'Medium', leetcode:78, approaches:[
+          { label:'Optimal · Recursion (Pick / Not-Pick)', topic:'Recursion', code:
+`void solve(int idx, vector<int>& nums, vector<int>& cur, vector<vector<int>>& res){
+    if(idx == (int)nums.size()){ res.push_back(cur); return; }
+    cur.push_back(nums[idx]);
+    solve(idx + 1, nums, cur, res);   // pick
+    cur.pop_back();
+    solve(idx + 1, nums, cur, res);   // not pick
+}
+// Time: O(2^n * n)   Space: O(n) recursion stack` } ] },
+        { name:'Learn All Patterns of Subsequences (Theory)', difficulty:'Easy', approaches:[
+          { label:'Optimal · Recursion (Template)', topic:'Recursion', code:
+`void printSubsequences(int idx, vector<int>& arr, vector<int>& cur){
+    if(idx == (int)arr.size()){
+        // process / print cur
+        return;
+    }
+    cur.push_back(arr[idx]);
+    printSubsequences(idx + 1, arr, cur); // take
+    cur.pop_back();
+    printSubsequences(idx + 1, arr, cur); // don't take
+}
+// This "take / don't take" template drives every problem in this section.` } ] },
+        { name:'Count all subsequences with sum K', difficulty:'Easy', approaches:[
+          { label:'Optimal · Recursion (Pick / Not-Pick)', topic:'Recursion', code:
+`int countSum(int idx, vector<int>& arr, int target){
+    if(idx == (int)arr.size()) return target == 0 ? 1 : 0;
+    int pick = (arr[idx] <= target) ? countSum(idx + 1, arr, target - arr[idx]) : 0;
+    int notPick = countSum(idx + 1, arr, target);
+    return pick + notPick;
+}
+// Time: O(2^n)   Space: O(n) recursion stack` } ] },
+        { name:'Check if there exists a subsequence with sum K', difficulty:'Easy', approaches:[
+          { label:'Optimal · Recursion (early exit)', topic:'Recursion', code:
+`bool checkSum(int idx, vector<int>& arr, int target){
+    if(target == 0) return true;
+    if(idx == (int)arr.size()) return false;
+    bool pick = false;
+    if(arr[idx] <= target) pick = checkSum(idx + 1, arr, target - arr[idx]);
+    if(pick) return true;
+    return checkSum(idx + 1, arr, target);
+}
+// Time: O(2^n) worst   Space: O(n) recursion stack` } ] },
+        { name:'Combination Sum', difficulty:'Medium', leetcode:39, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(int idx, vector<int>& arr, int target, vector<int>& cur, vector<vector<int>>& res){
+    if(idx == (int)arr.size()){
+        if(target == 0) res.push_back(cur);
+        return;
+    }
+    if(arr[idx] <= target){
+        cur.push_back(arr[idx]);
+        solve(idx, arr, target - arr[idx], cur, res); // reuse same element
+        cur.pop_back();
+    }
+    solve(idx + 1, arr, target, cur, res);
+}
+// Time: O(2^target) worst   Space: O(target) recursion stack` } ] },
+        { name:'Combination Sum II', difficulty:'Medium', leetcode:40, approaches:[
+          { label:'Optimal · Recursion (Backtracking, sorted + skip dupes)', topic:'Recursion', code:
+`// arr must be sorted before the call
+void solve(int idx, vector<int>& arr, int target, vector<int>& cur, vector<vector<int>>& res){
+    if(target == 0){ res.push_back(cur); return; }
+    for(int i = idx; i < (int)arr.size(); i++){
+        if(i > idx && arr[i] == arr[i - 1]) continue; // skip duplicates
+        if(arr[i] > target) break;
+        cur.push_back(arr[i]);
+        solve(i + 1, arr, target - arr[i], cur, res);
+        cur.pop_back();
+    }
+}
+// Time: O(2^n)   Space: O(n) recursion stack` } ] },
+        { name:'Subsets I', difficulty:'Medium', leetcode:78, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(int idx, vector<int>& nums, vector<int>& cur, vector<vector<int>>& res){
+    res.push_back(cur);
+    for(int i = idx; i < (int)nums.size(); i++){
+        cur.push_back(nums[i]);
+        solve(i + 1, nums, cur, res);
+        cur.pop_back();
+    }
+}
+// Time: O(2^n * n)   Space: O(n) recursion stack` } ] },
+        { name:'Subsets II', difficulty:'Medium', leetcode:90, approaches:[
+          { label:'Optimal · Recursion (Backtracking, sorted + skip dupes)', topic:'Recursion', code:
+`// nums must be sorted before the call
+void solve(int idx, vector<int>& nums, vector<int>& cur, vector<vector<int>>& res){
+    res.push_back(cur);
+    for(int i = idx; i < (int)nums.size(); i++){
+        if(i > idx && nums[i] == nums[i - 1]) continue;
+        cur.push_back(nums[i]);
+        solve(i + 1, nums, cur, res);
+        cur.pop_back();
+    }
+}
+// Time: O(2^n * n)   Space: O(n) recursion stack` } ] },
+        { name:'Combination Sum III', difficulty:'Medium', leetcode:216, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(int idx, int k, int target, vector<int>& cur, vector<vector<int>>& res){
+    if((int)cur.size() == k){
+        if(target == 0) res.push_back(cur);
+        return;
+    }
+    for(int i = idx; i <= 9; i++){
+        if(i > target) break;
+        cur.push_back(i);
+        solve(i + 1, k, target - i, cur, res);
+        cur.pop_back();
+    }
+}
+// Time: O(2^9)   Space: O(k) recursion stack` } ] },
+        { name:'Letter Combinations of a Phone Number', difficulty:'Hard', leetcode:17, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(int idx, string& digits, string& cur, vector<string>& res, vector<string>& mapping){
+    if(idx == (int)digits.size()){ res.push_back(cur); return; }
+    string letters = mapping[digits[idx] - '0'];
+    for(char c : letters){
+        cur.push_back(c);
+        solve(idx + 1, digits, cur, res, mapping);
+        cur.pop_back();
+    }
+}
+vector<string> letterCombinations(string digits){
+    vector<string> res;
+    if(digits.empty()) return res;
+    vector<string> mapping = {"","","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+    string cur;
+    solve(0, digits, cur, res, mapping);
+    return res;
+}
+// Time: O(4^n)   Space: O(n) recursion stack` } ] },
+      ]},
+      { name:'Trying out all Combos / Hard', questions:[
+        { name:'Palindrome partitioning', difficulty:'Hard', leetcode:131, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`bool isPalindrome(string& s, int l, int r){
+    while(l < r) if(s[l++] != s[r--]) return false;
+    return true;
+}
+void solve(int idx, string& s, vector<string>& cur, vector<vector<string>>& res){
+    if(idx == (int)s.size()){ res.push_back(cur); return; }
+    for(int i = idx; i < (int)s.size(); i++){
+        if(isPalindrome(s, idx, i)){
+            cur.push_back(s.substr(idx, i - idx + 1));
+            solve(i + 1, s, cur, res);
+            cur.pop_back();
+        }
+    }
+}
+// Time: O(2^n * n)   Space: O(n) recursion stack` } ] },
+        { name:'Word Search', difficulty:'Hard', leetcode:79, approaches:[
+          { label:'Optimal · Recursion (Backtracking / DFS)', topic:'Recursion', code:
+`bool exist(vector<vector<char>>& board, string word){
+    int m = board.size(), n = board[0].size();
+    function<bool(int,int,int)> dfs = [&](int r, int c, int idx) -> bool {
+        if(idx == (int)word.size()) return true;
+        if(r < 0 || c < 0 || r >= m || c >= n || board[r][c] != word[idx]) return false;
+        char temp = board[r][c];
+        board[r][c] = '#';
+        bool found = dfs(r+1,c,idx+1) || dfs(r-1,c,idx+1) || dfs(r,c+1,idx+1) || dfs(r,c-1,idx+1);
+        board[r][c] = temp;
+        return found;
+    };
+    for(int i = 0; i < m; i++)
+        for(int j = 0; j < n; j++)
+            if(dfs(i, j, 0)) return true;
+    return false;
+}
+// Time: O(m*n*4^L)   Space: O(L) recursion stack` } ] },
+        { name:'N Queen', difficulty:'Hard', leetcode:51, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`bool isSafe(vector<string>& board, int row, int col, int n){
+    for(int i = 0; i < row; i++) if(board[i][col] == 'Q') return false;
+    for(int i = row, j = col; i >= 0 && j >= 0; i--, j--) if(board[i][j] == 'Q') return false;
+    for(int i = row, j = col; i >= 0 && j < n; i--, j++) if(board[i][j] == 'Q') return false;
+    return true;
+}
+void solve(int row, int n, vector<string>& board, vector<vector<string>>& res){
+    if(row == n){ res.push_back(board); return; }
+    for(int col = 0; col < n; col++){
+        if(isSafe(board, row, col, n)){
+            board[row][col] = 'Q';
+            solve(row + 1, n, board, res);
+            board[row][col] = '.';
+        }
+    }
+}
+// Time: O(n!) worst   Space: O(n^2)` } ] },
+        { name:'Rat in a Maze', difficulty:'Hard', approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(int r, int c, vector<vector<int>>& maze, int n,
+           vector<vector<int>>& visited, string path, vector<string>& res){
+    if(r == n-1 && c == n-1){ res.push_back(path); return; }
+    int dr[] = {1,0,0,-1}, dc[] = {0,-1,1,0};
+    string dir = "DLRU";
+    for(int i = 0; i < 4; i++){
+        int nr = r + dr[i], nc = c + dc[i];
+        if(nr>=0 && nc>=0 && nr<n && nc<n && maze[nr][nc]==1 && !visited[nr][nc]){
+            visited[nr][nc] = 1;
+            solve(nr, nc, maze, n, visited, path + dir[i], res);
+            visited[nr][nc] = 0;
+        }
+    }
+}
+// Time: O(4^(n*n)) worst   Space: O(n^2)` } ] },
+        { name:'Word Break', difficulty:'Medium', leetcode:139, approaches:[
+          { label:'Optimal · Dynamic Programming', topic:'Dynamic Programming', code:
+`bool wordBreak(string s, vector<string>& dict){
+    unordered_set<string> words(dict.begin(), dict.end());
+    int n = s.size();
+    vector<int> dp(n + 1, 0);
+    dp[0] = 1;
+    for(int i = 1; i <= n; i++)
+        for(int j = 0; j < i; j++)
+            if(dp[j] && words.count(s.substr(j, i - j))){ dp[i] = 1; break; }
+    return dp[n];
+}
+// Time: O(n^2)   Space: O(n)` },
+          { label:'Recursion + Memo (as under this topic)', topic:'Recursion', code:
+`unordered_map<int,bool> memo;
+bool solve(int idx, string& s, unordered_set<string>& dict){
+    if(idx == (int)s.size()) return true;
+    if(memo.count(idx)) return memo[idx];
+    for(int end = idx + 1; end <= (int)s.size(); end++){
+        if(dict.count(s.substr(idx, end - idx)) && solve(end, s, dict))
+            return memo[idx] = true;
+    }
+    return memo[idx] = false;
+}
+// Time: O(n^2)   Space: O(n) recursion stack + memo` } ] },
+        { name:'M Coloring Problem', difficulty:'Hard', approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`bool isSafe(int node, vector<int>& color, vector<vector<int>>& graph, int n, int col){
+    for(int k = 0; k < n; k++)
+        if(k != node && graph[node][k] && color[k] == col) return false;
+    return true;
+}
+bool solve(int node, vector<int>& color, int m, int n, vector<vector<int>>& graph){
+    if(node == n) return true;
+    for(int col = 1; col <= m; col++){
+        if(isSafe(node, color, graph, n, col)){
+            color[node] = col;
+            if(solve(node + 1, color, m, n, graph)) return true;
+            color[node] = 0;
+        }
+    }
+    return false;
+}
+// Time: O(m^n) worst   Space: O(n)` } ] },
+        { name:'Sudoku Solver', difficulty:'Hard', leetcode:37, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`bool isValid(vector<vector<char>>& board, int r, int c, char val){
+    for(int i = 0; i < 9; i++){
+        if(board[r][i] == val) return false;
+        if(board[i][c] == val) return false;
+        if(board[3*(r/3)+i/3][3*(c/3)+i%3] == val) return false;
+    }
+    return true;
+}
+bool solveSudoku(vector<vector<char>>& board){
+    for(int r = 0; r < 9; r++){
+        for(int c = 0; c < 9; c++){
+            if(board[r][c] == '.'){
+                for(char v = '1'; v <= '9'; v++){
+                    if(isValid(board, r, c, v)){
+                        board[r][c] = v;
+                        if(solveSudoku(board)) return true;
+                        board[r][c] = '.';
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+// Time: O(9^(empty cells)) worst   Space: O(1) extra` } ] },
+        { name:'Expression Add Operators', difficulty:'Hard', leetcode:282, approaches:[
+          { label:'Optimal · Recursion (Backtracking)', topic:'Recursion', code:
+`void solve(string& num, long long target, int idx, string path,
+           long long val, long long prev, vector<string>& res){
+    int n = num.size();
+    if(idx == n){
+        if(val == target) res.push_back(path);
+        return;
+    }
+    for(int i = idx; i < n; i++){
+        if(i != idx && num[idx] == '0') break; // no leading zeros
+        string part = num.substr(idx, i - idx + 1);
+        long long cur = stoll(part);
+        if(idx == 0){
+            solve(num, target, i + 1, part, cur, cur, res);
+        } else {
+            solve(num, target, i + 1, path + "+" + part, val + cur, cur, res);
+            solve(num, target, i + 1, path + "-" + part, val - cur, -cur, res);
+            solve(num, target, i + 1, path + "*" + part, val - prev + prev * cur, prev * cur, res);
+        }
+    }
+}
+// Time: O(4^n)   Space: O(n) recursion stack` } ] },
+      ]},
+    ]
+  },
+  { id:'bit-manipulation', title:'Bit Manipulation [Concepts & Problems]', total:18, sections:[] },
+  { id:'stack-queue', title:'Stack and Queues [Learning, Pre-In-Post-fix, Monotonic Stack, Implementation]', total:30, sections:[] },
+  { id:'sliding-window', title:'Sliding Window & Two Pointer Combined Problems', total:12, sections:[] },
+  { id:'heaps', title:'Heaps [Learning, Medium, Hard Problems]', total:17, sections:[] },
+  { id:'greedy', title:'Greedy Algorithms [Easy, Medium/Hard]', total:15, sections:[] },
+  { id:'binary-trees', title:'Binary Trees [Traversals, Medium and Hard Problems]', total:38, sections:[] },
+  { id:'bst', title:'Binary Search Trees [Concept and Problems]', total:16, sections:[] },
+  { id:'graphs', title:'Graphs [Concepts & Problems]', total:53, sections:[] },
+  { id:'dp', title:'Dynamic Programming [Patterns and Problems]', total:55, sections:[] },
+  { id:'tries', title:'Tries', total:7, sections:[] },
+  { id:'strings-adv', title:'Strings', total:9, sections:[] },
+];
+
+/* ======================= STATE ======================= */
+let state = { view:'home', topicId:null, filter:'All', query:'', openQ:null, tab:{} };
+
+/* ======================= HELPERS ======================= */
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function highlightCpp(code){
+  let html = esc(code);
+  html = html.replace(/(\/\/.*$)/gm, '§CM§$1§\/CM§');
+  html = html.replace(/("(?:[^"\\]|\\.)*")/g, '§STR§$1§\/STR§');
+  html = html.replace(/('(?:[^'\\]|\\.)*')/g, '§STR§$1§\/STR§');
+  const kw = ['if','else','for','while','return','break','continue','struct','class','void','true','false','const','static','function','new'];
+  const tp = ['int','long','double','float','bool','char','string','auto','vector','stack','queue','unordered_map','unordered_set','map','set','pair'];
+  html = html.replace(/\b([A-Za-z_]\w*)\b/g, (m)=>{
+    if(kw.includes(m)) return '§KW§'+m+'§\/KW§';
+    if(tp.includes(m)) return '§TP§'+m+'§\/TP§';
+    return m;
+  });
+  html = html.replace(/\b(\d+)\b/g, '§NUM§$1§\/NUM§');
+  html = html
+    .replace(/§CM§/g,'<span class="cm">').replace(/§\/CM§/g,'</span>')
+    .replace(/§STR§/g,'<span class="str">').replace(/§\/STR§/g,'</span>')
+    .replace(/§KW§/g,'<span class="kw">').replace(/§\/KW§/g,'</span>')
+    .replace(/§TP§/g,'<span class="tp">').replace(/§\/TP§/g,'</span>')
+    .replace(/§NUM§/g,'<span class="num">').replace(/§\/NUM§/g,'</span>');
+  return html;
+}
+
+function diffBadge(d){
+  const cls = d === 'Easy' ? 'badge-easy' : d === 'Medium' ? 'badge-medium' : 'badge-hard';
+  return `<span class="badge ${cls}">${d}</span>`;
+}
+
+function countAll(topic){
+  let n = 0;
+  topic.sections.forEach(s => n += s.questions.length);
+  return n;
+}
+
+/* ======================= RENDER ======================= */
+function render(){
+  const app = document.getElementById('app');
+  if(state.view === 'home') app.innerHTML = renderHome();
+  else app.innerHTML = renderTopic();
+  attachHandlers();
+}
+
+function renderHome(){
+  const cards = TOPICS.map((t, i) => {
+    const mapped = countAll(t);
+    const hasData = mapped > 0;
+    const meta = hasData
+      ? `${mapped} of ${t.total} problems mapped with C++ solutions`
+      : `${t.total} problems in this topic — not added yet`;
+    return `
+      <div class="topic-card ${hasData ? 'has-data' : ''}" data-idx="${String(i+1).padStart(2,'0')}" data-topic="${t.id}">
+        <div class="topic-main">
+          <div class="name">${esc(t.title)}</div>
+          <div class="meta ${hasData ? 'ready' : ''}">${meta}</div>
+        </div>
+        <div class="chev">→</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="top">
+      <div class="brand"><span class="mark"></span><h1>DSA Sheet</h1></div>
+      <p>Pick a topic, then a question — the optimal interview approach and its C++ code are one click away.</p>
+    </div>
+    <div class="rail">${cards}</div>
+  `;
+}
+
+function renderTopic(){
+  const topic = TOPICS.find(t => t.id === state.topicId);
+  const sections = topic.sections;
+  const filters = ['All','Easy','Medium','Hard'];
+
+  let body = '';
+  if(sections.length === 0){
+    body = `<div class="empty-state">No questions mapped for this topic yet.<br>Share the next set of screenshots and this section will fill in.</div>`;
+  } else {
+    let anyShown = false;
+    sections.forEach(sec => {
+      const qs = sec.questions.filter(q =>
+        (state.filter === 'All' || q.difficulty === state.filter) &&
+        q.name.toLowerCase().includes(state.query.toLowerCase())
+      );
+      if(qs.length === 0) return;
+      anyShown = true;
+      body += `<div class="section-title">${esc(sec.name)}</div>`;
+      qs.forEach((q, qi) => {
+        const key = sec.name + '::' + q.name;
+        const isOpen = state.openQ === key;
+        body += renderQuestion(q, key, isOpen);
+      });
+    });
+    if(!anyShown) body = `<div class="no-results">No questions match your filters.</div>`;
+  }
+
+  return `
+    <div class="subhead">
+      <button class="back-btn" data-action="home">← All topics</button>
+      <h2>${esc(topic.title)}</h2>
+      <div class="controls">
+        ${filters.map(f => `<button class="chip ${state.filter===f?'active':''}" data-filter="${f}">${f}</button>`).join('')}
+        <input class="search" placeholder="Search this topic…" value="${esc(state.query)}" data-search>
+      </div>
+    </div>
+    ${body}
+  `;
+}
+
+function renderQuestion(q, key, isOpen){
+  let inner = '';
+  if(isOpen){
+    const approaches = q.approaches;
+    const activeIdx = state.tab[key] || 0;
+    const active = approaches[activeIdx];
+    let tabs = '';
+    if(approaches.length > 1){
+      tabs = `<div class="approach-tabs">` + approaches.map((a, i) => `
+        <button class="a-tab ${i===activeIdx?'active':''}" data-tab="${key}::${i}">
+          ${a.label.split('·')[0].trim()} <span class="tag">${esc(a.topic)}</span>
+        </button>`).join('') + `</div>`;
+    }
+    inner = `
+      <div class="q-body">
+        ${tabs}
+        <div class="code-wrap">
+          <div class="code-topic">${approaches.length>1 ? esc(active.label) : `Optimal approach — filed under <b>${esc(active.topic)}</b>`}</div>
+          <button class="copy-btn" data-copy="${key}::${activeIdx}">Copy</button>
+          <pre class="code-block"><code>${highlightCpp(active.code)}</code></pre>
+        </div>
+      </div>`;
+  }
+  const lcTag = q.leetcode ? `<span class="lc-tag">LC ${q.leetcode}</span>` : '';
+  return `
+    <div class="q-row ${isOpen?'open':''}" data-q="${key}">
+      <div class="q-head" data-toggle="${key}">
+        ${diffBadge(q.difficulty)}
+        <div class="q-name">${esc(q.name)}</div>
+        ${lcTag}
+        <div class="q-arrow">›</div>
+      </div>
+      ${inner}
+    </div>`;
+}
+
+/* ======================= HANDLERS ======================= */
+function attachHandlers(){
+  document.querySelectorAll('[data-topic]').forEach(el => {
+    el.onclick = () => {
+      state.view = 'topic'; state.topicId = el.dataset.topic;
+      state.filter = 'All'; state.query = ''; state.openQ = null; state.tab = {};
+      render();
+    };
+  });
+  document.querySelectorAll('[data-action="home"]').forEach(el => {
+    el.onclick = () => { state.view = 'home'; render(); };
+  });
+  document.querySelectorAll('[data-filter]').forEach(el => {
+    el.onclick = () => { state.filter = el.dataset.filter; render(); };
+  });
+  const searchEl = document.querySelector('[data-search]');
+  if(searchEl){
+    searchEl.oninput = (e) => { state.query = e.target.value; render(); searchEl.focus(); searchEl.setSelectionRange(state.query.length, state.query.length); };
+  }
+  document.querySelectorAll('[data-toggle]').forEach(el => {
+    el.onclick = () => {
+      const key = el.dataset.toggle;
+      state.openQ = state.openQ === key ? null : key;
+      render();
+    };
+  });
+  document.querySelectorAll('[data-tab]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const full = el.dataset.tab;
+      const cut = full.lastIndexOf('::');
+      const fullKey = full.slice(0, cut);
+      const idx = parseInt(full.slice(cut + 2));
+      state.tab[fullKey] = idx;
+      render();
+    };
+  });
+  document.querySelectorAll('[data-copy]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const full = el.dataset.copy;
+      const idx = parseInt(full.slice(full.lastIndexOf('::')+2));
+      const key = full.slice(0, full.lastIndexOf('::'));
+      const topic = TOPICS.find(t => t.id === state.topicId);
+      let q = null;
+      topic.sections.forEach(s => s.questions.forEach(qq => { if(s.name+'::'+qq.name === key) q = qq; }));
+      if(q){
+        navigator.clipboard.writeText(q.approaches[idx].code).then(() => {
+          el.textContent = 'Copied';
+          setTimeout(() => { el.textContent = 'Copy'; }, 1200);
+        });
+      }
+    };
+  });
+}
+
+render();
+</script>
+</body>
+</html>
