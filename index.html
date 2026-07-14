@@ -1000,7 +1000,661 @@ int reversePairs(vector<int>& arr, int l, int r){
       ]},
     ]
   },
-  { id:'binary-search', title:'Binary Search [1D, 2D Arrays, Search Space]', total:32, sections:[] },
+  {
+    id:'binary-search', title:'Binary Search [1D, 2D Arrays, Search Space]', total:32,
+    sections:[
+      { name:'BS on 1D Arrays', questions:[
+        { name:'Search X in sorted array', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search', topic:'Binary Search', code:
+`int search(vector<int>& arr, int x){
+    int lo = 0, hi = arr.size() - 1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] == x) return mid;
+        else if(arr[mid] < x) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Brute Force · Linear Search', topic:'Arrays', code:
+`int searchBrute(vector<int>& arr, int x){
+    for(int i = 0; i < (int)arr.size(); i++)
+        if(arr[i] == x) return i;
+    return -1;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Lower Bound', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search', topic:'Binary Search', code:
+`int lowerBound(vector<int>& arr, int x){
+    int lo = 0, hi = arr.size() - 1, ans = arr.size();
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] >= x){ ans = mid; hi = mid - 1; }
+        else lo = mid + 1;
+    }
+    return ans; // first index where arr[index] >= x
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Upper Bound', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search', topic:'Binary Search', code:
+`int upperBound(vector<int>& arr, int x){
+    int lo = 0, hi = arr.size() - 1, ans = arr.size();
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] > x){ ans = mid; hi = mid - 1; }
+        else lo = mid + 1;
+    }
+    return ans; // first index where arr[index] > x
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Search insert position', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search (Lower Bound)', topic:'Binary Search', code:
+`int searchInsert(vector<int>& arr, int target){
+    int lo = 0, hi = arr.size() - 1, ans = arr.size();
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] >= target){ ans = mid; hi = mid - 1; }
+        else lo = mid + 1;
+    }
+    return ans;
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Floor and Ceil in Sorted Array', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search', topic:'Binary Search', code:
+`pair<int,int> getFloorCeil(vector<int>& arr, int x){
+    int lo = 0, hi = arr.size() - 1, floorVal = -1, ceilVal = -1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] == x) return {arr[mid], arr[mid]};
+        else if(arr[mid] < x){ floorVal = arr[mid]; lo = mid + 1; }
+        else { ceilVal = arr[mid]; hi = mid - 1; }
+    }
+    return {floorVal, ceilVal};
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'First and last occurrence', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search (twice)', topic:'Binary Search', code:
+`pair<int,int> searchRange(vector<int>& arr, int target){
+    int lo = 0, hi = arr.size() - 1, first = -1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] == target){ first = mid; hi = mid - 1; }
+        else if(arr[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    if(first == -1) return {-1, -1};
+    lo = 0; hi = arr.size() - 1; int last = first;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] == target){ last = mid; lo = mid + 1; }
+        else if(arr[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return {first, last};
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Brute Force · Linear Scan', topic:'Arrays', code:
+`pair<int,int> searchRangeBrute(vector<int>& arr, int target){
+    int first = -1, last = -1;
+    for(int i = 0; i < (int)arr.size(); i++){
+        if(arr[i] == target){
+            if(first == -1) first = i;
+            last = i;
+        }
+    }
+    return {first, last};
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Count Occurrences in a Sorted Array', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search (First & Last Occurrence)', topic:'Binary Search', code:
+`int countOccurrences(vector<int>& arr, int target){
+    auto range = searchRange(arr, target); // reuses First & Last Occurrence
+    if(range.first == -1) return 0;
+    return range.second - range.first + 1;
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Search in rotated sorted array-I', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search (identify sorted half)', topic:'Binary Search', code:
+`int search(vector<int>& arr, int target){
+    int lo = 0, hi = arr.size() - 1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] == target) return mid;
+        if(arr[lo] <= arr[mid]){ // left half is sorted
+            if(arr[lo] <= target && target < arr[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else { // right half is sorted
+            if(arr[mid] < target && target <= arr[hi]) lo = mid + 1;
+            else hi = mid - 1;
+        }
+    }
+    return -1;
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Brute Force · Linear Search', topic:'Arrays', code:
+`int searchBrute(vector<int>& arr, int target){
+    for(int i = 0; i < (int)arr.size(); i++)
+        if(arr[i] == target) return i;
+    return -1;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Search in rotated sorted array-II', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search (skip duplicates at ends)', topic:'Binary Search', code:
+`bool search(vector<int>& arr, int target){
+    int lo = 0, hi = arr.size() - 1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] == target) return true;
+        if(arr[lo] == arr[mid] && arr[mid] == arr[hi]){ lo++; hi--; continue; }
+        if(arr[lo] <= arr[mid]){
+            if(arr[lo] <= target && target < arr[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else {
+            if(arr[mid] < target && target <= arr[hi]) lo = mid + 1;
+            else hi = mid - 1;
+        }
+    }
+    return false;
+}
+// Time: O(log n) avg, O(n) worst with many duplicates   Space: O(1)` } ] },
+        { name:'Find minimum in Rotated Sorted Array', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search', topic:'Binary Search', code:
+`int findMin(vector<int>& arr){
+    int lo = 0, hi = arr.size() - 1;
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] > arr[hi]) lo = mid + 1;
+        else hi = mid;
+    }
+    return arr[lo];
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Brute Force · Linear Scan', topic:'Arrays', code:
+`int findMinBrute(vector<int>& arr){
+    int minVal = arr[0];
+    for(int x : arr) minVal = min(minVal, x);
+    return minVal;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Find out how many times the array is rotated', difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search (index of minimum)', topic:'Binary Search', code:
+`int countRotations(vector<int>& arr){
+    int lo = 0, hi = arr.size() - 1;
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] > arr[hi]) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo; // index of the minimum = number of rotations
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Single element in a Sorted Array', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search (even/odd index pairing)', topic:'Binary Search', code:
+`int singleNonDuplicate(vector<int>& arr){
+    int lo = 0, hi = arr.size() - 2;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        mid -= (mid % 2); // force mid to an even index
+        if(arr[mid] == arr[mid + 1]) lo = mid + 2;
+        else hi = mid - 1;
+    }
+    return arr[lo];
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Brute Force · XOR', topic:'Bit Manipulation', code:
+`int singleNonDuplicateBrute(vector<int>& arr){
+    int result = 0;
+    for(int x : arr) result ^= x;
+    return result;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Find peak element', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search (follow the uphill slope)', topic:'Binary Search', code:
+`int findPeakElement(vector<int>& arr){
+    int n = arr.size(), lo = 0, hi = n - 1;
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(arr[mid] > arr[mid + 1]) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(log n)   Space: O(1)` },
+          { label:'Brute Force · Linear Scan', topic:'Arrays', code:
+`int findPeakElementBrute(vector<int>& arr){
+    int n = arr.size();
+    for(int i = 0; i < n; i++){
+        bool leftOk = (i == 0) || arr[i - 1] < arr[i];
+        bool rightOk = (i == n - 1) || arr[i] > arr[i + 1];
+        if(leftOk && rightOk) return i;
+    }
+    return -1;
+}
+// Time: O(n)   Space: O(1)` } ] },
+      ]},
+      { name:'BS on Answers', questions:[
+        { name:'Find square root of a number', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`int floorSqrt(int n){
+    long long lo = 1, hi = n, ans = 0;
+    while(lo <= hi){
+        long long mid = lo + (hi - lo) / 2;
+        if(mid * mid <= n){ ans = mid; lo = mid + 1; }
+        else hi = mid - 1;
+    }
+    return (int)ans;
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Find Nth root of a number', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`int nthRoot(int n, int m){
+    int lo = 1, hi = m;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        long long val = 1;
+        bool overflow = false;
+        for(int i = 0; i < n; i++){
+            val *= mid;
+            if(val > m){ overflow = true; break; }
+        }
+        if(!overflow && val == m) return mid;
+        if(overflow || val > m) hi = mid - 1;
+        else lo = mid + 1;
+    }
+    return -1; // no exact integer Nth root
+}
+// Time: O(n log m)   Space: O(1)` } ] },
+        { name:'Koko eating bananas', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`long long calcHours(vector<int>& piles, int speed){
+    long long hours = 0;
+    for(int p : piles) hours += (p + speed - 1) / speed;
+    return hours;
+}
+int minEatingSpeed(vector<int>& piles, int h){
+    int lo = 1, hi = *max_element(piles.begin(), piles.end());
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(calcHours(piles, mid) <= h) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(maxPile))   Space: O(1)` },
+          { label:'Brute Force · Try every speed', topic:'Arrays', code:
+`int minEatingSpeedBrute(vector<int>& piles, int h){
+    int maxPile = *max_element(piles.begin(), piles.end());
+    for(int speed = 1; speed <= maxPile; speed++)
+        if(calcHours(piles, speed) <= h) return speed;
+    return maxPile;
+}
+// Time: O(n * maxPile)   Space: O(1)` } ] },
+        { name:'Minimum days to make M bouquets', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`bool canMake(vector<int>& days, int bloomDay, int m, int k){
+    int bouquets = 0, flowers = 0;
+    for(int d : days){
+        if(d <= bloomDay) flowers++;
+        else flowers = 0;
+        if(flowers == k){ bouquets++; flowers = 0; }
+    }
+    return bouquets >= m;
+}
+int minDays(vector<int>& days, int m, int k){
+    if((long long)m * k > (long long)days.size()) return -1;
+    int lo = *min_element(days.begin(), days.end());
+    int hi = *max_element(days.begin(), days.end());
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(canMake(days, mid, m, k)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(maxDay))   Space: O(1)` } ] },
+        { name:'Find the smallest divisor', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`int smallestDivisor(vector<int>& arr, int threshold){
+    int lo = 1, hi = *max_element(arr.begin(), arr.end());
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        long long sum = 0;
+        for(int x : arr) sum += (x + mid - 1) / mid;
+        if(sum <= threshold) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(maxElement))   Space: O(1)` } ] },
+        { name:'Capacity to Ship Packages Within D Days', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`int daysNeeded(vector<int>& weights, int capacity){
+    int days = 1, load = 0;
+    for(int w : weights){
+        if(load + w > capacity){ days++; load = 0; }
+        load += w;
+    }
+    return days;
+}
+int shipWithinDays(vector<int>& weights, int d){
+    int lo = *max_element(weights.begin(), weights.end());
+    int hi = accumulate(weights.begin(), weights.end(), 0);
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(daysNeeded(weights, mid) <= d) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(sum))   Space: O(1)` },
+          { label:'Brute Force · Try every capacity', topic:'Arrays', code:
+`int shipWithinDaysBrute(vector<int>& weights, int d){
+    int lo = *max_element(weights.begin(), weights.end());
+    int hi = accumulate(weights.begin(), weights.end(), 0);
+    for(int cap = lo; cap <= hi; cap++)
+        if(daysNeeded(weights, cap) <= d) return cap;
+    return hi;
+}
+// Time: O((sum - maxWeight) * n)   Space: O(1)` } ] },
+        { name:'Kth Missing Positive Number', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`int findKthPositive(vector<int>& arr, int k){
+    int lo = 0, hi = arr.size() - 1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        int missing = arr[mid] - (mid + 1);
+        if(missing < k) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return lo + k; // lo ends up as hi + 1
+}
+// Time: O(log n)   Space: O(1)` } ] },
+        { name:'Aggressive Cows', difficulty:'Hard', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`bool canPlace(vector<int>& stalls, int dist, int cows){
+    int count = 1, last = stalls[0];
+    for(int i = 1; i < (int)stalls.size(); i++){
+        if(stalls[i] - last >= dist){ count++; last = stalls[i]; }
+    }
+    return count >= cows;
+}
+int aggressiveCows(vector<int>& stalls, int cows){
+    sort(stalls.begin(), stalls.end());
+    int lo = 0, hi = stalls.back() - stalls[0], ans = 0;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(canPlace(stalls, mid, cows)){ ans = mid; lo = mid + 1; }
+        else hi = mid - 1;
+    }
+    return ans;
+}
+// Time: O(n log n + n log(maxDist))   Space: O(1)` } ] },
+        { name:"Book Allocation Problem", difficulty:'Hard', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`bool isPossible(vector<int>& books, int maxPages, int students){
+    int cnt = 1, pages = 0;
+    for(int p : books){
+        if(p > maxPages) return false;
+        if(pages + p > maxPages){ cnt++; pages = p; }
+        else pages += p;
+    }
+    return cnt <= students;
+}
+int allocateBooks(vector<int>& books, int students){
+    if((int)books.size() < students) return -1;
+    int lo = *max_element(books.begin(), books.end());
+    int hi = accumulate(books.begin(), books.end(), 0);
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(isPossible(books, mid, students)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(sum))   Space: O(1)` } ] },
+        { name:'Split array - largest sum', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`bool canSplit(vector<int>& nums, int maxSum, int k){
+    int parts = 1, sum = 0;
+    for(int x : nums){
+        if(sum + x > maxSum){ parts++; sum = x; }
+        else sum += x;
+    }
+    return parts <= k;
+}
+int splitArray(vector<int>& nums, int k){
+    int lo = *max_element(nums.begin(), nums.end());
+    int hi = accumulate(nums.begin(), nums.end(), 0);
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(canSplit(nums, mid, k)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(sum))   Space: O(1)` },
+          { label:'Brute Force · DP', topic:'Dynamic Programming', code:
+`int splitArrayBrute(vector<int>& nums, int k){
+    int n = nums.size();
+    vector<int> prefix(n + 1, 0);
+    for(int i = 0; i < n; i++) prefix[i + 1] = prefix[i] + nums[i];
+    vector<vector<int>> dp(n + 1, vector<int>(k + 1, INT_MAX));
+    dp[0][0] = 0;
+    for(int i = 1; i <= n; i++)
+        for(int j = 1; j <= k; j++)
+            for(int p = 0; p < i; p++){
+                if(dp[p][j - 1] == INT_MAX) continue;
+                int sum = prefix[i] - prefix[p];
+                dp[i][j] = min(dp[i][j], max(dp[p][j - 1], sum));
+            }
+    return dp[n][k];
+}
+// Time: O(n^2 * k)   Space: O(n * k)` } ] },
+        { name:"Painter's Partition", difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`bool canPaint(vector<int>& boards, int maxLen, int painters){
+    int cnt = 1, len = 0;
+    for(int b : boards){
+        if(len + b > maxLen){ cnt++; len = b; }
+        else len += b;
+    }
+    return cnt <= painters;
+}
+int painterPartition(vector<int>& boards, int painters){
+    int lo = *max_element(boards.begin(), boards.end());
+    int hi = accumulate(boards.begin(), boards.end(), 0);
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        if(canPaint(boards, mid, painters)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo;
+}
+// Time: O(n log(sum))   Space: O(1)   Same pattern as Book Allocation` } ] },
+        { name:'Minimize Max Distance to Gas Station', difficulty:'Hard', approaches:[
+          { label:'Optimal · Binary Search on Real Answer', topic:'Binary Search', code:
+`bool canAchieve(vector<int>& stations, int k, double dist){
+    int required = 0;
+    for(int i = 0; i + 1 < (int)stations.size(); i++){
+        int gap = stations[i + 1] - stations[i];
+        required += (int)(gap / dist);
+    }
+    return required <= k;
+}
+double minmaxGasDist(vector<int>& stations, int k){
+    double lo = 0, hi = 0;
+    for(int i = 0; i + 1 < (int)stations.size(); i++)
+        hi = max(hi, (double)(stations[i + 1] - stations[i]));
+    for(int iter = 0; iter < 100; iter++){ // fixed iterations for real-valued precision
+        double mid = (lo + hi) / 2;
+        if(canAchieve(stations, k, mid)) hi = mid;
+        else lo = mid;
+    }
+    return hi;
+}
+// Time: O(n * 100)   Space: O(1)` } ] },
+        { name:'Median of 2 sorted arrays', difficulty:'Hard', approaches:[
+          { label:'Optimal · Binary Search Partition', topic:'Binary Search', code:
+`double findMedianSortedArrays(vector<int>& a, vector<int>& b){
+    if(a.size() > b.size()) return findMedianSortedArrays(b, a);
+    int n1 = a.size(), n2 = b.size(), total = n1 + n2, half = (total + 1) / 2;
+    int lo = 0, hi = n1;
+    while(lo <= hi){
+        int cut1 = lo + (hi - lo) / 2;
+        int cut2 = half - cut1;
+        int l1 = (cut1 == 0) ? INT_MIN : a[cut1 - 1];
+        int l2 = (cut2 == 0) ? INT_MIN : b[cut2 - 1];
+        int r1 = (cut1 == n1) ? INT_MAX : a[cut1];
+        int r2 = (cut2 == n2) ? INT_MAX : b[cut2];
+        if(l1 <= r2 && l2 <= r1){
+            if(total % 2 == 0) return (max(l1, l2) + min(r1, r2)) / 2.0;
+            return max(l1, l2);
+        } else if(l1 > r2) hi = cut1 - 1;
+        else lo = cut1 + 1;
+    }
+    return 0.0;
+}
+// Time: O(log(min(n1, n2)))   Space: O(1)` },
+          { label:'Brute Force · Merge Both Arrays', topic:'Arrays', code:
+`double findMedianSortedArraysBrute(vector<int>& a, vector<int>& b){
+    vector<int> merged;
+    merge(a.begin(), a.end(), b.begin(), b.end(), back_inserter(merged));
+    int n = merged.size();
+    if(n % 2 == 1) return merged[n / 2];
+    return (merged[n / 2 - 1] + merged[n / 2]) / 2.0;
+}
+// Time: O(n + m)   Space: O(n + m)` } ] },
+        { name:'Kth element of 2 sorted arrays', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search Partition', topic:'Binary Search', code:
+`int kthElement(vector<int>& a, vector<int>& b, int k){
+    if(a.size() > b.size()) return kthElement(b, a, k);
+    int n1 = a.size(), n2 = b.size();
+    int lo = max(0, k - n2), hi = min(k, n1);
+    while(lo <= hi){
+        int cut1 = lo + (hi - lo) / 2;
+        int cut2 = k - cut1;
+        int l1 = (cut1 == 0) ? INT_MIN : a[cut1 - 1];
+        int l2 = (cut2 == 0) ? INT_MIN : b[cut2 - 1];
+        int r1 = (cut1 == n1) ? INT_MAX : a[cut1];
+        int r2 = (cut2 == n2) ? INT_MAX : b[cut2];
+        if(l1 <= r2 && l2 <= r1) return max(l1, l2);
+        else if(l1 > r2) hi = cut1 - 1;
+        else lo = cut1 + 1;
+    }
+    return -1;
+}
+// Time: O(log(min(n1, n2)))   Space: O(1)   Same partition idea as Median of 2 Sorted Arrays` } ] },
+      ]},
+      { name:'BS on 2D Arrays', questions:[
+        { name:"Find row with maximum 1's", difficulty:'Easy', approaches:[
+          { label:'Optimal · Binary Search per Row', topic:'Binary Search', code:
+`int rowWithMax1s(vector<vector<int>>& mat){
+    int n = mat.size(), m = mat[0].size();
+    int row = -1, maxCount = 0;
+    for(int i = 0; i < n; i++){
+        int lo = 0, hi = m - 1, cnt = 0;
+        while(lo <= hi){
+            int mid = lo + (hi - lo) / 2;
+            if(mat[i][mid] == 1){ cnt = m - mid; hi = mid - 1; }
+            else lo = mid + 1;
+        }
+        if(cnt > maxCount){ maxCount = cnt; row = i; }
+    }
+    return row;
+}
+// Time: O(n log m)   Space: O(1)` } ] },
+        { name:'Search in a 2D matrix', difficulty:'Hard', approaches:[
+          { label:'Optimal · Treat as 1D Binary Search', topic:'Binary Search', code:
+`bool searchMatrix(vector<vector<int>>& mat, int target){
+    int n = mat.size(), m = mat[0].size();
+    int lo = 0, hi = n * m - 1;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        int val = mat[mid / m][mid % m];
+        if(val == target) return true;
+        else if(val < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return false;
+}
+// Time: O(log(n*m))   Space: O(1)` },
+          { label:'Brute Force · Scan Every Cell', topic:'Arrays', code:
+`bool searchMatrixBrute(vector<vector<int>>& mat, int target){
+    for(auto& row : mat)
+        for(int x : row)
+            if(x == target) return true;
+    return false;
+}
+// Time: O(n*m)   Space: O(1)` } ] },
+        { name:'Search in 2D matrix - II', difficulty:'Hard', approaches:[
+          { label:'Optimal · Staircase Search', topic:'Binary Search', code:
+`bool searchMatrixII(vector<vector<int>>& mat, int target){
+    int n = mat.size(), m = mat[0].size();
+    int row = 0, col = m - 1;
+    while(row < n && col >= 0){
+        if(mat[row][col] == target) return true;
+        else if(mat[row][col] > target) col--;
+        else row++;
+    }
+    return false;
+}
+// Time: O(n + m)   Space: O(1)   Starts top-right, eliminates a row or column each step` },
+          { label:'Brute Force · Scan Every Cell', topic:'Arrays', code:
+`bool searchMatrixIIBrute(vector<vector<int>>& mat, int target){
+    for(auto& row : mat)
+        for(int x : row)
+            if(x == target) return true;
+    return false;
+}
+// Time: O(n*m)   Space: O(1)` } ] },
+        { name:'Find Peak Element - II', difficulty:'Medium', approaches:[
+          { label:'Optimal · Binary Search on Columns', topic:'Binary Search', code:
+`vector<int> findPeakGrid(vector<vector<int>>& mat){
+    int n = mat.size(), m = mat[0].size();
+    int lo = 0, hi = m - 1;
+    while(lo <= hi){
+        int midCol = lo + (hi - lo) / 2;
+        int maxRow = 0;
+        for(int i = 0; i < n; i++) if(mat[i][midCol] > mat[maxRow][midCol]) maxRow = i;
+        int left  = (midCol - 1 >= 0) ? mat[maxRow][midCol - 1] : -1;
+        int right = (midCol + 1 < m)  ? mat[maxRow][midCol + 1] : -1;
+        if(mat[maxRow][midCol] > left && mat[maxRow][midCol] > right) return {maxRow, midCol};
+        else if(left > mat[maxRow][midCol]) hi = midCol - 1;
+        else lo = midCol + 1;
+    }
+    return {-1, -1};
+}
+// Time: O(n log m)   Space: O(1)` } ] },
+        { name:'Matrix Median', difficulty:'Hard', approaches:[
+          { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
+`int countLessEqual(vector<int>& row, int x){
+    int lo = 0, hi = row.size() - 1, ans = 0;
+    while(lo <= hi){
+        int mid = lo + (hi - lo) / 2;
+        if(row[mid] <= x){ ans = mid + 1; lo = mid + 1; }
+        else hi = mid - 1;
+    }
+    return ans;
+}
+int matrixMedian(vector<vector<int>>& mat){
+    int n = mat.size(), m = mat[0].size();
+    int lo = INT_MAX, hi = INT_MIN;
+    for(auto& row : mat){ lo = min(lo, row[0]); hi = max(hi, row[m - 1]); }
+    int need = (n * m) / 2 + 1;
+    while(lo < hi){
+        int mid = lo + (hi - lo) / 2;
+        int count = 0;
+        for(auto& row : mat) count += countLessEqual(row, mid);
+        if(count < need) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+// Time: O(n log m * log(maxVal - minVal))   Space: O(1)` } ] },
+      ]},
+    ]
+  },
   { id:'strings-basic', title:'Strings [Basic and Medium]', total:15, sections:[] },
   { id:'linkedlist', title:'Learn LinkedList [Single LL, Double LL, Medium, Hard Problems]', total:31, sections:[] },
   {
