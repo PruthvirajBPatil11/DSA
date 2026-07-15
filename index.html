@@ -1656,7 +1656,597 @@ int matrixMedian(vector<vector<int>>& mat){
     ]
   },
   { id:'strings-basic', title:'Strings [Basic and Medium]', total:15, sections:[] },
-  { id:'linkedlist', title:'Learn LinkedList [Single LL, Double LL, Medium, Hard Problems]', total:31, sections:[] },
+  {
+    id:'linkedlist', title:'Learn LinkedList [Single LL, Double LL, Medium, Hard Problems]', total:31,
+    sections:[
+      { name:'Learn 1D LinkedList', questions:[
+        { name:'Introduction to Singly LinkedList', difficulty:'Easy', approaches:[
+          { label:'Optimal · Build & Traverse', topic:'LinkedList', code:
+`struct Node {
+    int data;
+    Node* next;
+    Node(int x) : data(x), next(nullptr) {}
+};
+Node* buildList(vector<int>& arr){
+    Node* head = new Node(arr[0]);
+    Node* tail = head;
+    for(int i = 1; i < (int)arr.size(); i++){
+        tail->next = new Node(arr[i]);
+        tail = tail->next;
+    }
+    return head;
+}
+void printList(Node* head){
+    while(head){ cout << head->data << " "; head = head->next; }
+}
+// Time: O(n) to build/print   Space: O(n) for the list itself` } ] },
+        { name:'Insertion at the head of Linked List', difficulty:'Easy', approaches:[
+          { label:'Optimal · O(1) Pointer Update', topic:'LinkedList', code:
+`Node* insertAtHead(Node* head, int val){
+    Node* newNode = new Node(val);
+    newNode->next = head;
+    return newNode;
+}
+// Time: O(1)   Space: O(1)` } ] },
+        { name:'Deletion of the head of LL', difficulty:'Easy', approaches:[
+          { label:'Optimal · O(1) Pointer Update', topic:'LinkedList', code:
+`Node* deleteHead(Node* head){
+    if(!head) return nullptr;
+    Node* temp = head;
+    head = head->next;
+    delete temp;
+    return head;
+}
+// Time: O(1)   Space: O(1)` } ] },
+        { name:'Find the length of the Linked List', difficulty:'Easy', approaches:[
+          { label:'Optimal · Single Traversal', topic:'LinkedList', code:
+`int lengthOfList(Node* head){
+    int len = 0;
+    while(head){ len++; head = head->next; }
+    return len;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Search in Linked List', difficulty:'Medium', approaches:[
+          { label:'Optimal · Single Traversal', topic:'LinkedList', code:
+`bool searchInList(Node* head, int key){
+    while(head){
+        if(head->data == key) return true;
+        head = head->next;
+    }
+    return false;
+}
+// Time: O(n)   Space: O(1)` } ] },
+      ]},
+      { name:'Learn Doubly LinkedList', questions:[
+        { name:'Introduction to Doubly LL', difficulty:'Easy', approaches:[
+          { label:'Optimal · Build with prev/next', topic:'LinkedList', code:
+`struct Node {
+    int data;
+    Node* next;
+    Node* prev;
+    Node(int x) : data(x), next(nullptr), prev(nullptr) {}
+};
+Node* buildDLL(vector<int>& arr){
+    Node* head = new Node(arr[0]);
+    Node* tail = head;
+    for(int i = 1; i < (int)arr.size(); i++){
+        Node* newNode = new Node(arr[i]);
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
+    return head;
+}
+// Time: O(n)   Space: O(n) for the list itself` } ] },
+        { name:'Insert node before head in Doubly Linked List', difficulty:'Easy', approaches:[
+          { label:'Optimal · O(1) Pointer Update', topic:'LinkedList', code:
+`Node* insertBeforeHead(Node* head, int val){
+    Node* newNode = new Node(val);
+    newNode->next = head;
+    if(head) head->prev = newNode;
+    return newNode;
+}
+// Time: O(1)   Space: O(1)` } ] },
+        { name:'Delete head of Doubly Linked List', difficulty:'Easy', approaches:[
+          { label:'Optimal · O(1) Pointer Update', topic:'LinkedList', code:
+`Node* deleteHead(Node* head){
+    if(!head || !head->next) return nullptr;
+    Node* newHead = head->next;
+    newHead->prev = nullptr;
+    delete head;
+    return newHead;
+}
+// Time: O(1)   Space: O(1)` } ] },
+        { name:'Reverse a Doubly Linked List', difficulty:'Medium', approaches:[
+          { label:'Optimal · Swap next/prev per node', topic:'LinkedList', code:
+`Node* reverseDLL(Node* head){
+    Node* curr = head, *last = nullptr;
+    while(curr){
+        last = curr->prev;
+        curr->prev = curr->next;
+        curr->next = last;
+        curr = curr->prev;
+    }
+    return last ? last->prev : head;
+}
+// Time: O(n)   Space: O(1)` } ] },
+      ]},
+      { name:'Medium Problems of LL', questions:[
+        { name:'Middle of a LinkedList [TortoiseHare Method]', difficulty:'Easy', leetcode:876, approaches:[
+          { label:'Optimal · Slow & Fast Pointer', topic:'LinkedList', code:
+`Node* middleNode(Node* head){
+    Node* slow = head, *fast = head;
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+// Time: O(n)   Space: O(1)   Single pass` },
+          { label:'Brute Force · Count then Traverse', topic:'LinkedList', code:
+`Node* middleNodeBrute(Node* head){
+    int len = 0;
+    Node* temp = head;
+    while(temp){ len++; temp = temp->next; }
+    temp = head;
+    for(int i = 0; i < len / 2; i++) temp = temp->next;
+    return temp;
+}
+// Time: O(n)   Space: O(1)   Two passes` } ] },
+        { name:'Reverse a LinkedList [Iterative]', difficulty:'Medium', leetcode:206, approaches:[
+          { label:'Optimal · Iterative', topic:'LinkedList', code:
+`Node* reverseList(Node* head){
+    Node* prev = nullptr, *curr = head;
+    while(curr){
+        Node* nextNode = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextNode;
+    }
+    return prev;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Reverse a LL', difficulty:'Medium', leetcode:206, approaches:[
+          { label:'Optimal · Iterative', topic:'LinkedList', code:
+`Node* reverseListIterative(Node* head){
+    Node* prev = nullptr, *curr = head;
+    while(curr){
+        Node* nextNode = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextNode;
+    }
+    return prev;
+}
+// Time: O(n)   Space: O(1)   Preferred in interviews for O(1) space` },
+          { label:'Recursion (as under this topic)', topic:'Recursion', code:
+`Node* reverseListRecursive(Node* head){
+    if(!head || !head->next) return head;
+    Node* newHead = reverseListRecursive(head->next);
+    head->next->next = head;
+    head->next = nullptr;
+    return newHead;
+}
+// Time: O(n)   Space: O(n) recursion stack` } ] },
+        { name:'Detect a loop in LL', difficulty:'Medium', leetcode:141, approaches:[
+          { label:"Optimal · Floyd's Cycle Detection", topic:'LinkedList', code:
+`bool hasCycle(Node* head){
+    Node* slow = head, *fast = head;
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+        if(slow == fast) return true;
+    }
+    return false;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Hashing Visited Nodes', topic:'LinkedList', code:
+`bool hasCycleBrute(Node* head){
+    unordered_set<Node*> visited;
+    while(head){
+        if(visited.count(head)) return true;
+        visited.insert(head);
+        head = head->next;
+    }
+    return false;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Find the starting point in LL', difficulty:'Medium', leetcode:142, approaches:[
+          { label:"Optimal · Floyd's Algorithm (two-phase)", topic:'LinkedList', code:
+`Node* detectCycleStart(Node* head){
+    Node* slow = head, *fast = head;
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+        if(slow == fast){
+            Node* ptr1 = head, *ptr2 = slow;
+            while(ptr1 != ptr2){ ptr1 = ptr1->next; ptr2 = ptr2->next; }
+            return ptr1;
+        }
+    }
+    return nullptr;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Length of loop in LL', difficulty:'Medium', approaches:[
+          { label:"Optimal · Floyd's Algorithm + Counting", topic:'LinkedList', code:
+`int lengthOfLoop(Node* head){
+    Node* slow = head, *fast = head;
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+        if(slow == fast){
+            int len = 1;
+            Node* temp = slow->next;
+            while(temp != slow){ len++; temp = temp->next; }
+            return len;
+        }
+    }
+    return 0;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Check if LL is palindrome or not', difficulty:'Medium', leetcode:234, approaches:[
+          { label:'Optimal · Find Middle + Reverse Half', topic:'LinkedList', code:
+`bool isPalindrome(Node* head){
+    if(!head || !head->next) return true;
+    Node* slow = head, *fast = head;
+    while(fast->next && fast->next->next){
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    Node* second = reverseList(slow->next); // reuse the iterative reverse
+    Node* p1 = head, *p2 = second;
+    bool ok = true;
+    while(p2){
+        if(p1->data != p2->data){ ok = false; break; }
+        p1 = p1->next; p2 = p2->next;
+    }
+    slow->next = reverseList(second); // restore the list
+    return ok;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Copy into Array', topic:'LinkedList', code:
+`bool isPalindromeBrute(Node* head){
+    vector<int> vals;
+    while(head){ vals.push_back(head->data); head = head->next; }
+    int l = 0, r = vals.size() - 1;
+    while(l < r) if(vals[l++] != vals[r--]) return false;
+    return true;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Segregate odd and even nodes in Linked List', difficulty:'Medium', leetcode:328, approaches:[
+          { label:'Optimal · In-place Relinking', topic:'LinkedList', code:
+`Node* oddEvenList(Node* head){
+    if(!head || !head->next) return head;
+    Node* odd = head, *even = head->next, *evenHead = even;
+    while(even && even->next){
+        odd->next = even->next;
+        odd = odd->next;
+        even->next = odd->next;
+        even = even->next;
+    }
+    odd->next = evenHead;
+    return head;
+}
+// Time: O(n)   Space: O(1)   "odd/even" refers to node position, not value` } ] },
+        { name:'Remove Nth node from the back of the LL', difficulty:'Medium', leetcode:19, approaches:[
+          { label:'Optimal · Two Pointer (single pass)', topic:'LinkedList', code:
+`Node* removeNthFromEnd(Node* head, int n){
+    Node dummy(0);
+    dummy.next = head;
+    Node* fast = &dummy, *slow = &dummy;
+    for(int i = 0; i < n; i++) fast = fast->next;
+    while(fast->next){ fast = fast->next; slow = slow->next; }
+    Node* toDelete = slow->next;
+    slow->next = slow->next->next;
+    delete toDelete;
+    return dummy.next;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Two Pass (find length first)', topic:'LinkedList', code:
+`Node* removeNthFromEndBrute(Node* head, int n){
+    int len = 0;
+    Node* temp = head;
+    while(temp){ len++; temp = temp->next; }
+    if(len == n) return head->next;
+    temp = head;
+    for(int i = 0; i < len - n - 1; i++) temp = temp->next;
+    Node* toDelete = temp->next;
+    temp->next = temp->next->next;
+    delete toDelete;
+    return head;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Delete the middle node in LL', difficulty:'Medium', leetcode:2095, approaches:[
+          { label:'Optimal · Slow & Fast Pointer', topic:'LinkedList', code:
+`Node* deleteMiddle(Node* head){
+    if(!head || !head->next) return nullptr;
+    Node* slow = head, *fast = head, *prev = nullptr;
+    while(fast && fast->next){
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    prev->next = slow->next;
+    delete slow;
+    return head;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Sort LL', difficulty:'Hard', leetcode:148, approaches:[
+          { label:'Optimal · Merge Sort on Linked List', topic:'LinkedList', code:
+`Node* getMiddle(Node* head){
+    Node* slow = head, *fast = head->next;
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+Node* mergeTwoLists(Node* a, Node* b){
+    Node dummy(0);
+    Node* tail = &dummy;
+    while(a && b){
+        if(a->data <= b->data){ tail->next = a; a = a->next; }
+        else { tail->next = b; b = b->next; }
+        tail = tail->next;
+    }
+    tail->next = a ? a : b;
+    return dummy.next;
+}
+Node* sortList(Node* head){
+    if(!head || !head->next) return head;
+    Node* mid = getMiddle(head);
+    Node* right = mid->next;
+    mid->next = nullptr;
+    Node* left = sortList(head);
+    right = sortList(right);
+    return mergeTwoLists(left, right);
+}
+// Time: O(n log n)   Space: O(log n) recursion stack` } ] },
+        { name:"Sort a Linked List of 0's 1's and 2's", difficulty:'Medium', approaches:[
+          { label:'Optimal · Counting + Overwrite (two passes)', topic:'LinkedList', code:
+`Node* sortZeroOneTwo(Node* head){
+    int count[3] = {0, 0, 0};
+    Node* temp = head;
+    while(temp){ count[temp->data]++; temp = temp->next; }
+    temp = head;
+    int idx = 0;
+    while(idx < 3){
+        while(count[idx] > 0){
+            temp->data = idx;
+            temp = temp->next;
+            count[idx]--;
+        }
+        idx++;
+    }
+    return head;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Extract, Sort, Rewrite', topic:'LinkedList', code:
+`Node* sortZeroOneTwoBrute(Node* head){
+    vector<int> vals;
+    Node* temp = head;
+    while(temp){ vals.push_back(temp->data); temp = temp->next; }
+    sort(vals.begin(), vals.end());
+    temp = head;
+    for(int v : vals){ temp->data = v; temp = temp->next; }
+    return head;
+}
+// Time: O(n log n)   Space: O(n)` } ] },
+        { name:'Find the intersection point of Y LL', difficulty:'Medium', leetcode:160, approaches:[
+          { label:'Optimal · Two Pointer Switch-Over', topic:'LinkedList', code:
+`Node* getIntersectionNode(Node* headA, Node* headB){
+    Node* a = headA, *b = headB;
+    while(a != b){
+        a = a ? a->next : headB;
+        b = b ? b->next : headA;
+    }
+    return a;
+}
+// Time: O(n + m)   Space: O(1)` } ] },
+        { name:'Add one to a number represented by LL', difficulty:'Medium', leetcode:369, approaches:[
+          { label:'Optimal · Reverse, Add, Reverse Back', topic:'LinkedList', code:
+`Node* addOne(Node* head){
+    head = reverseList(head); // reuse the iterative reverse
+    Node* temp = head;
+    int carry = 1;
+    while(temp){
+        int sum = temp->data + carry;
+        temp->data = sum % 10;
+        carry = sum / 10;
+        if(!temp->next && carry) temp->next = new Node(0);
+        temp = temp->next;
+    }
+    return reverseList(head);
+}
+// Time: O(n)   Space: O(1) extra` } ] },
+        { name:'Add two numbers in Linked List', difficulty:'Medium', leetcode:445, approaches:[
+          { label:'Optimal · Stacks (handles most-significant-digit-first lists)', topic:'LinkedList', code:
+`Node* addTwoNumbers(Node* l1, Node* l2){
+    stack<int> s1, s2;
+    while(l1){ s1.push(l1->data); l1 = l1->next; }
+    while(l2){ s2.push(l2->data); l2 = l2->next; }
+    int carry = 0;
+    Node* result = nullptr;
+    while(!s1.empty() || !s2.empty() || carry){
+        int sum = carry;
+        if(!s1.empty()){ sum += s1.top(); s1.pop(); }
+        if(!s2.empty()){ sum += s2.top(); s2.pop(); }
+        carry = sum / 10;
+        Node* newNode = new Node(sum % 10);
+        newNode->next = result;
+        result = newNode;
+    }
+    return result;
+}
+// Time: O(n + m)   Space: O(n + m)` } ] },
+      ]},
+      { name:'Medium Problems of DLL', questions:[
+        { name:'Delete all occurrences of a key in DLL', difficulty:'Hard', approaches:[
+          { label:'Optimal · Single Traversal', topic:'LinkedList', code:
+`Node* deleteAllOccurrences(Node* head, int key){
+    Node* curr = head;
+    while(curr){
+        Node* nextNode = curr->next;
+        if(curr->data == key){
+            if(curr->prev) curr->prev->next = curr->next;
+            else head = curr->next;
+            if(curr->next) curr->next->prev = curr->prev;
+            delete curr;
+        }
+        curr = nextNode;
+    }
+    return head;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Find Pairs with Given Sum in Doubly Linked List', difficulty:'Medium', approaches:[
+          { label:'Optimal · Two Pointer from Both Ends', topic:'LinkedList', code:
+`vector<pair<int,int>> findPairsWithSum(Node* head, int target){
+    Node* left = head, *right = head;
+    while(right->next) right = right->next; // move to tail
+    vector<pair<int,int>> res;
+    while(left != right && left->prev != right){
+        int sum = left->data + right->data;
+        if(sum == target){
+            res.push_back({left->data, right->data});
+            left = left->next;
+            right = right->prev;
+        } else if(sum < target) left = left->next;
+        else right = right->prev;
+    }
+    return res;
+}
+// Time: O(n)   Space: O(1) extra (excluding output)` },
+          { label:'Brute Force · Nested Loop', topic:'LinkedList', code:
+`vector<pair<int,int>> findPairsWithSumBrute(Node* head, int target){
+    vector<pair<int,int>> res;
+    for(Node* i = head; i; i = i->next)
+        for(Node* j = i->next; j; j = j->next)
+            if(i->data + j->data == target) res.push_back({i->data, j->data});
+    return res;
+}
+// Time: O(n^2)   Space: O(1) extra` } ] },
+        { name:'Remove duplicates from sorted DLL', difficulty:'Hard', approaches:[
+          { label:'Optimal · Single Traversal', topic:'LinkedList', code:
+`Node* removeDuplicates(Node* head){
+    Node* curr = head;
+    while(curr && curr->next){
+        if(curr->data == curr->next->data){
+            Node* dup = curr->next;
+            curr->next = dup->next;
+            if(dup->next) dup->next->prev = curr;
+            delete dup;
+        } else curr = curr->next;
+    }
+    return head;
+}
+// Time: O(n)   Space: O(1)` } ] },
+      ]},
+      { name:'Hard Problems of LL', questions:[
+        { name:'Reverse LL in group of given size K', difficulty:'Hard', leetcode:25, approaches:[
+          { label:'Optimal · Recursion + In-place Reversal', topic:'LinkedList', code:
+`Node* reverseKGroup(Node* head, int k){
+    Node* temp = head;
+    int count = 0;
+    while(temp && count < k){ temp = temp->next; count++; }
+    if(count < k) return head; // fewer than k nodes left, leave as-is
+    Node* prev = reverseKGroup(temp, k); // process the rest first
+    Node* curr = head;
+    while(count-- > 0){
+        Node* nextNode = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextNode;
+    }
+    return prev;
+}
+// Time: O(n)   Space: O(n/k) recursion stack` } ] },
+        { name:'Rotate a LL', difficulty:'Hard', leetcode:61, approaches:[
+          { label:'Optimal · Make Circular + Relink', topic:'LinkedList', code:
+`Node* rotateRight(Node* head, int k){
+    if(!head || !head->next) return head;
+    int len = 1;
+    Node* tail = head;
+    while(tail->next){ tail = tail->next; len++; }
+    k = k % len;
+    if(k == 0) return head;
+    tail->next = head; // make circular
+    int stepsToNewTail = len - k;
+    Node* newTail = head;
+    for(int i = 1; i < stepsToNewTail; i++) newTail = newTail->next;
+    Node* newHead = newTail->next;
+    newTail->next = nullptr;
+    return newHead;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Flattening of LL', difficulty:'Hard', approaches:[
+          { label:'Optimal · Recursion + Merge (next & bottom pointers)', topic:'LinkedList', code:
+`struct Node {
+    int data;
+    Node* next;
+    Node* bottom;
+    Node(int x) : data(x), next(nullptr), bottom(nullptr) {}
+};
+Node* mergeTwoLists(Node* a, Node* b){
+    Node dummy(0);
+    Node* tail = &dummy;
+    while(a && b){
+        if(a->data <= b->data){ tail->bottom = a; a = a->bottom; }
+        else { tail->bottom = b; b = b->bottom; }
+        tail = tail->bottom;
+    }
+    tail->bottom = a ? a : b;
+    return dummy.bottom;
+}
+Node* flatten(Node* root){
+    if(!root || !root->next) return root;
+    root->next = flatten(root->next);
+    root = mergeTwoLists(root, root->next);
+    return root;
+}
+// Time: O(N * M) — N nodes merged pairwise, M = avg sub-list length   Space: O(1) extra` } ] },
+        { name:'Clone a LL with random and next pointer', difficulty:'Hard', leetcode:138, approaches:[
+          { label:'Optimal · Interweaving (O(1) extra space)', topic:'LinkedList', code:
+`struct Node {
+    int data;
+    Node* next;
+    Node* random;
+    Node(int x) : data(x), next(nullptr), random(nullptr) {}
+};
+Node* copyRandomList(Node* head){
+    if(!head) return nullptr;
+    for(Node* curr = head; curr; ){          // Step 1: interweave clones
+        Node* copy = new Node(curr->data);
+        copy->next = curr->next;
+        curr->next = copy;
+        curr = copy->next;
+    }
+    for(Node* curr = head; curr; curr = curr->next->next) // Step 2: fix random
+        if(curr->random) curr->next->random = curr->random->next;
+    Node* newHead = head->next;               // Step 3: separate the lists
+    for(Node* curr = head; curr; ){
+        Node* copy = curr->next;
+        curr->next = copy->next;
+        copy->next = copy->next ? copy->next->next : nullptr;
+        curr = curr->next;
+    }
+    return newHead;
+}
+// Time: O(n)   Space: O(1) extra` },
+          { label:'Brute Force · Hashmap old -> new', topic:'LinkedList', code:
+`Node* copyRandomListBrute(Node* head){
+    unordered_map<Node*, Node*> mp;
+    for(Node* curr = head; curr; curr = curr->next)
+        mp[curr] = new Node(curr->data);
+    for(Node* curr = head; curr; curr = curr->next){
+        mp[curr]->next = mp[curr->next];
+        mp[curr]->random = mp[curr->random];
+    }
+    return mp[head];
+}
+// Time: O(n)   Space: O(n)` } ] },
+      ]},
+    ]
+  },
   {
     id:'recursion', title:'Recursion [PatternWise]', total:25,
     sections:[
