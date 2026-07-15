@@ -1004,7 +1004,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     id:'binary-search', title:'Binary Search [1D, 2D Arrays, Search Space]', total:32,
     sections:[
       { name:'BS on 1D Arrays', questions:[
-        { name:'Search X in sorted array', difficulty:'Easy', approaches:[
+        { name:'Search X in sorted array', difficulty:'Easy', leetcode:704, approaches:[
           { label:'Optimal · Binary Search', topic:'Binary Search', code:
 `int search(vector<int>& arr, int x){
     int lo = 0, hi = arr.size() - 1;
@@ -1048,7 +1048,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return ans; // first index where arr[index] > x
 }
 // Time: O(log n)   Space: O(1)` } ] },
-        { name:'Search insert position', difficulty:'Easy', approaches:[
+        { name:'Search insert position', difficulty:'Easy', leetcode:35, approaches:[
           { label:'Optimal · Binary Search (Lower Bound)', topic:'Binary Search', code:
 `int searchInsert(vector<int>& arr, int target){
     int lo = 0, hi = arr.size() - 1, ans = arr.size();
@@ -1073,7 +1073,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return {floorVal, ceilVal};
 }
 // Time: O(log n)   Space: O(1)` } ] },
-        { name:'First and last occurrence', difficulty:'Easy', approaches:[
+        { name:'First and last occurrence', difficulty:'Easy', leetcode:34, approaches:[
           { label:'Optimal · Binary Search (twice)', topic:'Binary Search', code:
 `pair<int,int> searchRange(vector<int>& arr, int target){
     int lo = 0, hi = arr.size() - 1, first = -1;
@@ -1114,7 +1114,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return range.second - range.first + 1;
 }
 // Time: O(log n)   Space: O(1)` } ] },
-        { name:'Search in rotated sorted array-I', difficulty:'Medium', approaches:[
+        { name:'Search in rotated sorted array-I', difficulty:'Medium', leetcode:33, approaches:[
           { label:'Optimal · Binary Search (identify sorted half)', topic:'Binary Search', code:
 `int search(vector<int>& arr, int target){
     int lo = 0, hi = arr.size() - 1;
@@ -1139,7 +1139,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return -1;
 }
 // Time: O(n)   Space: O(1)` } ] },
-        { name:'Search in rotated sorted array-II', difficulty:'Medium', approaches:[
+        { name:'Search in rotated sorted array-II', difficulty:'Medium', leetcode:81, approaches:[
           { label:'Optimal · Binary Search (skip duplicates at ends)', topic:'Binary Search', code:
 `bool search(vector<int>& arr, int target){
     int lo = 0, hi = arr.size() - 1;
@@ -1158,7 +1158,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return false;
 }
 // Time: O(log n) avg, O(n) worst with many duplicates   Space: O(1)` } ] },
-        { name:'Find minimum in Rotated Sorted Array', difficulty:'Easy', approaches:[
+        { name:'Find minimum in Rotated Sorted Array', difficulty:'Easy', leetcode:153, approaches:[
           { label:'Optimal · Binary Search', topic:'Binary Search', code:
 `int findMin(vector<int>& arr){
     int lo = 0, hi = arr.size() - 1;
@@ -1189,7 +1189,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return lo; // index of the minimum = number of rotations
 }
 // Time: O(log n)   Space: O(1)` } ] },
-        { name:'Single element in a Sorted Array', difficulty:'Medium', approaches:[
+        { name:'Single element in a Sorted Array', difficulty:'Medium', leetcode:540, approaches:[
           { label:'Optimal · Binary Search (even/odd index pairing)', topic:'Binary Search', code:
 `int singleNonDuplicate(vector<int>& arr){
     int lo = 0, hi = arr.size() - 2;
@@ -1209,7 +1209,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return result;
 }
 // Time: O(n)   Space: O(1)` } ] },
-        { name:'Find peak element', difficulty:'Medium', approaches:[
+        { name:'Find peak element', difficulty:'Medium', leetcode:162, approaches:[
           { label:'Optimal · Binary Search (follow the uphill slope)', topic:'Binary Search', code:
 `int findPeakElement(vector<int>& arr){
     int n = arr.size(), lo = 0, hi = n - 1;
@@ -1234,7 +1234,7 @@ int reversePairs(vector<int>& arr, int l, int r){
 // Time: O(n)   Space: O(1)` } ] },
       ]},
       { name:'BS on Answers', questions:[
-        { name:'Find square root of a number', difficulty:'Medium', approaches:[
+        { name:'Find square root of a number', difficulty:'Medium', leetcode:69, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `int floorSqrt(int n){
     long long lo = 1, hi = n, ans = 0;
@@ -1265,7 +1265,7 @@ int reversePairs(vector<int>& arr, int l, int r){
     return -1; // no exact integer Nth root
 }
 // Time: O(n log m)   Space: O(1)` } ] },
-        { name:'Koko eating bananas', difficulty:'Medium', approaches:[
+        { name:'Koko eating bananas', difficulty:'Medium', leetcode:875, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `long long calcHours(vector<int>& piles, int speed){
     long long hours = 0;
@@ -1290,7 +1290,7 @@ int minEatingSpeed(vector<int>& piles, int h){
     return maxPile;
 }
 // Time: O(n * maxPile)   Space: O(1)` } ] },
-        { name:'Minimum days to make M bouquets', difficulty:'Medium', approaches:[
+        { name:'Minimum days to make M bouquets', difficulty:'Medium', leetcode:1482, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `bool canMake(vector<int>& days, int bloomDay, int m, int k){
     int bouquets = 0, flowers = 0;
@@ -1313,7 +1313,7 @@ int minDays(vector<int>& days, int m, int k){
     return lo;
 }
 // Time: O(n log(maxDay))   Space: O(1)` } ] },
-        { name:'Find the smallest divisor', difficulty:'Medium', approaches:[
+        { name:'Find the smallest divisor', difficulty:'Medium', leetcode:1283, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `int smallestDivisor(vector<int>& arr, int threshold){
     int lo = 1, hi = *max_element(arr.begin(), arr.end());
@@ -1327,7 +1327,7 @@ int minDays(vector<int>& days, int m, int k){
     return lo;
 }
 // Time: O(n log(maxElement))   Space: O(1)` } ] },
-        { name:'Capacity to Ship Packages Within D Days', difficulty:'Medium', approaches:[
+        { name:'Capacity to Ship Packages Within D Days', difficulty:'Medium', leetcode:1011, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `int daysNeeded(vector<int>& weights, int capacity){
     int days = 1, load = 0;
@@ -1357,7 +1357,7 @@ int shipWithinDays(vector<int>& weights, int d){
     return hi;
 }
 // Time: O((sum - maxWeight) * n)   Space: O(1)` } ] },
-        { name:'Kth Missing Positive Number', difficulty:'Medium', approaches:[
+        { name:'Kth Missing Positive Number', difficulty:'Medium', leetcode:1539, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `int findKthPositive(vector<int>& arr, int k){
     int lo = 0, hi = arr.size() - 1;
@@ -1413,7 +1413,7 @@ int allocateBooks(vector<int>& books, int students){
     return lo;
 }
 // Time: O(n log(sum))   Space: O(1)` } ] },
-        { name:'Split array - largest sum', difficulty:'Medium', approaches:[
+        { name:'Split array - largest sum', difficulty:'Medium', leetcode:410, approaches:[
           { label:'Optimal · Binary Search on Answer', topic:'Binary Search', code:
 `bool canSplit(vector<int>& nums, int maxSum, int k){
     int parts = 1, sum = 0;
@@ -1472,7 +1472,7 @@ int painterPartition(vector<int>& boards, int painters){
     return lo;
 }
 // Time: O(n log(sum))   Space: O(1)   Same pattern as Book Allocation` } ] },
-        { name:'Minimize Max Distance to Gas Station', difficulty:'Hard', approaches:[
+        { name:'Minimize Max Distance to Gas Station', difficulty:'Hard', leetcode:774, approaches:[
           { label:'Optimal · Binary Search on Real Answer', topic:'Binary Search', code:
 `bool canAchieve(vector<int>& stations, int k, double dist){
     int required = 0;
@@ -1494,7 +1494,7 @@ double minmaxGasDist(vector<int>& stations, int k){
     return hi;
 }
 // Time: O(n * 100)   Space: O(1)` } ] },
-        { name:'Median of 2 sorted arrays', difficulty:'Hard', approaches:[
+        { name:'Median of 2 sorted arrays', difficulty:'Hard', leetcode:4, approaches:[
           { label:'Optimal · Binary Search Partition', topic:'Binary Search', code:
 `double findMedianSortedArrays(vector<int>& a, vector<int>& b){
     if(a.size() > b.size()) return findMedianSortedArrays(b, a);
@@ -1564,7 +1564,7 @@ double minmaxGasDist(vector<int>& stations, int k){
     return row;
 }
 // Time: O(n log m)   Space: O(1)` } ] },
-        { name:'Search in a 2D matrix', difficulty:'Hard', approaches:[
+        { name:'Search in a 2D matrix', difficulty:'Hard', leetcode:74, approaches:[
           { label:'Optimal · Treat as 1D Binary Search', topic:'Binary Search', code:
 `bool searchMatrix(vector<vector<int>>& mat, int target){
     int n = mat.size(), m = mat[0].size();
@@ -1587,7 +1587,7 @@ double minmaxGasDist(vector<int>& stations, int k){
     return false;
 }
 // Time: O(n*m)   Space: O(1)` } ] },
-        { name:'Search in 2D matrix - II', difficulty:'Hard', approaches:[
+        { name:'Search in 2D matrix - II', difficulty:'Hard', leetcode:240, approaches:[
           { label:'Optimal · Staircase Search', topic:'Binary Search', code:
 `bool searchMatrixII(vector<vector<int>>& mat, int target){
     int n = mat.size(), m = mat[0].size();
@@ -1608,7 +1608,7 @@ double minmaxGasDist(vector<int>& stations, int k){
     return false;
 }
 // Time: O(n*m)   Space: O(1)` } ] },
-        { name:'Find Peak Element - II', difficulty:'Medium', approaches:[
+        { name:'Find Peak Element - II', difficulty:'Medium', leetcode:1901, approaches:[
           { label:'Optimal · Binary Search on Columns', topic:'Binary Search', code:
 `vector<int> findPeakGrid(vector<vector<int>>& mat){
     int n = mat.size(), m = mat[0].size();
