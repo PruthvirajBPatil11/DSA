@@ -2685,7 +2685,614 @@ bool solveSudoku(vector<vector<char>>& board){
     ]
   },
   { id:'bit-manipulation', title:'Bit Manipulation [Concepts & Problems]', total:18, sections:[] },
-  { id:'stack-queue', title:'Stack and Queues [Learning, Pre-In-Post-fix, Monotonic Stack, Implementation]', total:30, sections:[] },
+  {
+    id:'stack-queue', title:'Stack and Queues [Learning, Pre-In-Post-fix, Monotonic Stack, Implementation]', total:30,
+    sections:[
+      { name:'Learning', questions:[
+        { name:'Implement Stack using Arrays', difficulty:'Easy', approaches:[
+          { label:'Optimal · Dynamic Array', topic:'Stack', code:
+`class Stack {
+    vector<int> arr;
+    int topIdx = -1;
+public:
+    void push(int x){ arr.push_back(x); topIdx++; }
+    void pop(){ if(topIdx >= 0){ arr.pop_back(); topIdx--; } }
+    int top(){ return arr[topIdx]; }
+    bool empty(){ return topIdx == -1; }
+};
+// Time: O(1) per operation   Space: O(n)` } ] },
+        { name:'Implement Queue using Arrays', difficulty:'Easy', approaches:[
+          { label:'Optimal · Dynamic Array with Front Pointer', topic:'Queue', code:
+`class Queue {
+    vector<int> arr;
+    int frontIdx = 0;
+public:
+    void push(int x){ arr.push_back(x); }
+    void pop(){ if(frontIdx < (int)arr.size()) frontIdx++; }
+    int front(){ return arr[frontIdx]; }
+    bool empty(){ return frontIdx == (int)arr.size(); }
+};
+// Time: O(1) amortized per operation   Space: O(n)` } ] },
+        { name:'Implement Stack using Queue', difficulty:'Easy', leetcode:225, approaches:[
+          { label:'Optimal · Single Queue (rotate on push)', topic:'Stack', code:
+`class Stack {
+    queue<int> q;
+public:
+    void push(int x){
+        q.push(x);
+        for(int i = 0; i < (int)q.size() - 1; i++){
+            q.push(q.front());
+            q.pop();
+        }
+    }
+    void pop(){ q.pop(); }
+    int top(){ return q.front(); }
+    bool empty(){ return q.empty(); }
+};
+// Time: push O(n), pop/top O(1)   Space: O(n)` } ] },
+        { name:'Implement Queue using Stack', difficulty:'Easy', leetcode:232, approaches:[
+          { label:'Optimal · Two Stacks (amortized)', topic:'Queue', code:
+`class Queue {
+    stack<int> inStack, outStack;
+public:
+    void push(int x){ inStack.push(x); }
+    int pop(){
+        if(outStack.empty())
+            while(!inStack.empty()){ outStack.push(inStack.top()); inStack.pop(); }
+        int val = outStack.top(); outStack.pop();
+        return val;
+    }
+    bool empty(){ return inStack.empty() && outStack.empty(); }
+};
+// Time: O(1) amortized per operation   Space: O(n)` } ] },
+        { name:'Implement stack using Linkedlist', difficulty:'Easy', approaches:[
+          { label:'Optimal · Singly Linked List', topic:'Stack', code:
+`struct Node {
+    int data;
+    Node* next;
+    Node(int x) : data(x), next(nullptr) {}
+};
+class Stack {
+    Node* head = nullptr;
+public:
+    void push(int x){
+        Node* newNode = new Node(x);
+        newNode->next = head;
+        head = newNode;
+    }
+    void pop(){
+        if(head){ Node* temp = head; head = head->next; delete temp; }
+    }
+    int top(){ return head->data; }
+    bool empty(){ return head == nullptr; }
+};
+// Time: O(1) per operation   Space: O(n)` } ] },
+        { name:'Implement queue using Linkedlist', difficulty:'Easy', approaches:[
+          { label:'Optimal · Singly Linked List (head + tail)', topic:'Queue', code:
+`struct Node {
+    int data;
+    Node* next;
+    Node(int x) : data(x), next(nullptr) {}
+};
+class Queue {
+    Node* head = nullptr, *tail = nullptr;
+public:
+    void push(int x){
+        Node* newNode = new Node(x);
+        if(!tail) head = tail = newNode;
+        else { tail->next = newNode; tail = newNode; }
+    }
+    void pop(){
+        if(head){ Node* temp = head; head = head->next; if(!head) tail = nullptr; delete temp; }
+    }
+    int front(){ return head->data; }
+    bool empty(){ return head == nullptr; }
+};
+// Time: O(1) per operation   Space: O(n)` } ] },
+        { name:'Balanced Paranthesis', difficulty:'Easy', leetcode:20, approaches:[
+          { label:'Optimal · Stack Matching', topic:'Stack', code:
+`bool isValid(string s){
+    stack<char> st;
+    for(char c : s){
+        if(c == '(' || c == '[' || c == '{') st.push(c);
+        else {
+            if(st.empty()) return false;
+            char top = st.top();
+            if((c == ')' && top != '(') || (c == ']' && top != '[') || (c == '}' && top != '{'))
+                return false;
+            st.pop();
+        }
+    }
+    return st.empty();
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Implement Min Stack', difficulty:'Hard', leetcode:155, approaches:[
+          { label:'Optimal · Single Stack (encoded min)', topic:'Stack', code:
+`class MinStack {
+    stack<long long> st;
+    long long minVal;
+public:
+    void push(int x){
+        if(st.empty()){ st.push(x); minVal = x; }
+        else if(x < minVal){ st.push(2LL * x - minVal); minVal = x; }
+        else st.push(x);
+    }
+    void pop(){
+        if(st.top() < minVal) minVal = 2 * minVal - st.top();
+        st.pop();
+    }
+    int top(){ return st.top() < minVal ? (int)minVal : (int)st.top(); }
+    int getMin(){ return (int)minVal; }
+};
+// Time: O(1) per operation   Space: O(n), no second stack needed` },
+          { label:'Brute Force · Second Stack for Minimums', topic:'Stack', code:
+`class MinStackBrute {
+    stack<int> st, minSt;
+public:
+    void push(int x){
+        st.push(x);
+        if(minSt.empty() || x <= minSt.top()) minSt.push(x);
+        else minSt.push(minSt.top());
+    }
+    void pop(){ st.pop(); minSt.pop(); }
+    int top(){ return st.top(); }
+    int getMin(){ return minSt.top(); }
+};
+// Time: O(1) per operation   Space: O(n) — uses double the memory` } ] },
+      ]},
+      { name:'Prefix, Infix, PostFix Conversion Problems', questions:[
+        { name:'Infix to Postfix Conversion', difficulty:'Medium', approaches:[
+          { label:'Optimal · Operator Stack', topic:'Stack', code:
+`int precedence(char c){
+    if(c == '^') return 3;
+    if(c == '*' || c == '/') return 2;
+    if(c == '+' || c == '-') return 1;
+    return -1;
+}
+string infixToPostfix(string s){
+    stack<char> st;
+    string result;
+    for(char c : s){
+        if(isalnum(c)) result += c;
+        else if(c == '(') st.push(c);
+        else if(c == ')'){
+            while(!st.empty() && st.top() != '('){ result += st.top(); st.pop(); }
+            st.pop();
+        } else {
+            while(!st.empty() && st.top() != '(' && precedence(st.top()) >= precedence(c)){
+                result += st.top(); st.pop();
+            }
+            st.push(c);
+        }
+    }
+    while(!st.empty()){ result += st.top(); st.pop(); }
+    return result;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Prefix to Infix Conversion', difficulty:'Medium', approaches:[
+          { label:'Optimal · Scan Right to Left', topic:'Stack', code:
+`string prefixToInfix(string s){
+    stack<string> st;
+    for(int i = s.size() - 1; i >= 0; i--){
+        char c = s[i];
+        if(isalnum(c)) st.push(string(1, c));
+        else {
+            string op1 = st.top(); st.pop();
+            string op2 = st.top(); st.pop();
+            st.push("(" + op1 + c + op2 + ")");
+        }
+    }
+    return st.top();
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Prefix to Postfix Conversion', difficulty:'Medium', approaches:[
+          { label:'Optimal · Scan Right to Left', topic:'Stack', code:
+`string prefixToPostfix(string s){
+    stack<string> st;
+    for(int i = s.size() - 1; i >= 0; i--){
+        char c = s[i];
+        if(isalnum(c)) st.push(string(1, c));
+        else {
+            string op1 = st.top(); st.pop();
+            string op2 = st.top(); st.pop();
+            st.push(op1 + op2 + c);
+        }
+    }
+    return st.top();
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Postfix to Prefix Conversion', difficulty:'Medium', approaches:[
+          { label:'Optimal · Scan Left to Right', topic:'Stack', code:
+`string postfixToPrefix(string s){
+    stack<string> st;
+    for(char c : s){
+        if(isalnum(c)) st.push(string(1, c));
+        else {
+            string op2 = st.top(); st.pop();
+            string op1 = st.top(); st.pop();
+            st.push(c + op1 + op2);
+        }
+    }
+    return st.top();
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Postfix to Infix Conversion', difficulty:'Easy', approaches:[
+          { label:'Optimal · Scan Left to Right', topic:'Stack', code:
+`string postfixToInfix(string s){
+    stack<string> st;
+    for(char c : s){
+        if(isalnum(c)) st.push(string(1, c));
+        else {
+            string op2 = st.top(); st.pop();
+            string op1 = st.top(); st.pop();
+            st.push("(" + op1 + c + op2 + ")");
+        }
+    }
+    return st.top();
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Infix to Prefix Conversion', difficulty:'Medium', approaches:[
+          { label:'Optimal · Reverse + Infix-to-Postfix + Reverse', topic:'Stack', code:
+`string infixToPostfix(string s); // from "Infix to Postfix Conversion"
+string infixToPrefix(string s){
+    reverse(s.begin(), s.end());
+    for(char& c : s){
+        if(c == '(') c = ')';
+        else if(c == ')') c = '(';
+    }
+    string post = infixToPostfix(s); // reuse Infix -> Postfix
+    reverse(post.begin(), post.end());
+    return post;
+}
+// Time: O(n)   Space: O(n)` } ] },
+      ]},
+      { name:'Monotonic Stack/Queue Problems [VVV. Imp]', questions:[
+        { name:'Next Greater Element', difficulty:'Medium', leetcode:496, approaches:[
+          { label:'Optimal · Monotonic Stack', topic:'Stack', code:
+`vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2){
+    unordered_map<int,int> nge;
+    stack<int> st;
+    for(int i = nums2.size() - 1; i >= 0; i--){
+        while(!st.empty() && st.top() <= nums2[i]) st.pop();
+        nge[nums2[i]] = st.empty() ? -1 : st.top();
+        st.push(nums2[i]);
+    }
+    vector<int> res;
+    for(int x : nums1) res.push_back(nge[x]);
+    return res;
+}
+// Time: O(n + m)   Space: O(n)` } ] },
+        { name:'Next Greater Element - 2', difficulty:'Medium', leetcode:503, approaches:[
+          { label:'Optimal · Monotonic Stack over 2n range (circular)', topic:'Stack', code:
+`vector<int> nextGreaterElements(vector<int>& nums){
+    int n = nums.size();
+    vector<int> res(n, -1);
+    stack<int> st;
+    for(int i = 2 * n - 1; i >= 0; i--){
+        int idx = i % n;
+        while(!st.empty() && st.top() <= nums[idx]) st.pop();
+        if(i < n) res[idx] = st.empty() ? -1 : st.top();
+        st.push(nums[idx]);
+    }
+    return res;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Next Smaller Element', difficulty:'Medium', approaches:[
+          { label:'Optimal · Monotonic Stack', topic:'Stack', code:
+`vector<int> nextSmallerElement(vector<int>& arr){
+    int n = arr.size();
+    vector<int> res(n, -1);
+    stack<int> st;
+    for(int i = n - 1; i >= 0; i--){
+        while(!st.empty() && st.top() >= arr[i]) st.pop();
+        res[i] = st.empty() ? -1 : st.top();
+        st.push(arr[i]);
+    }
+    return res;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Number of Greater Elements to the Right', difficulty:'Easy', approaches:[
+          { label:'Optimal · Count for each index', topic:'Arrays', code:
+`vector<int> countGreaterRight(vector<int>& arr){
+    int n = arr.size();
+    vector<int> res(n, 0);
+    for(int i = 0; i < n; i++)
+        for(int j = i + 1; j < n; j++)
+            if(arr[j] > arr[i]) res[i]++;
+    return res;
+}
+// Time: O(n^2)   Space: O(1) extra   (counts, not just the next greater, so a single monotonic pass isn't enough)` } ] },
+        { name:'Trapping Rainwater', difficulty:'Hard', leetcode:42, approaches:[
+          { label:'Optimal · Two Pointer', topic:'Arrays', code:
+`int trap(vector<int>& height){
+    int n = height.size(), left = 0, right = n - 1;
+    int leftMax = 0, rightMax = 0, water = 0;
+    while(left < right){
+        if(height[left] <= height[right]){
+            leftMax = max(leftMax, height[left]);
+            water += leftMax - height[left];
+            left++;
+        } else {
+            rightMax = max(rightMax, height[right]);
+            water += rightMax - height[right];
+            right--;
+        }
+    }
+    return water;
+}
+// Time: O(n)   Space: O(1)` },
+          { label:'Brute Force · Prefix/Suffix Max Arrays', topic:'Arrays', code:
+`int trapBrute(vector<int>& height){
+    int n = height.size();
+    vector<int> leftMax(n), rightMax(n);
+    leftMax[0] = height[0];
+    for(int i = 1; i < n; i++) leftMax[i] = max(leftMax[i-1], height[i]);
+    rightMax[n-1] = height[n-1];
+    for(int i = n-2; i >= 0; i--) rightMax[i] = max(rightMax[i+1], height[i]);
+    int water = 0;
+    for(int i = 0; i < n; i++) water += min(leftMax[i], rightMax[i]) - height[i];
+    return water;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Sum of Subarray Minimums', difficulty:'Medium', leetcode:907, approaches:[
+          { label:'Optimal · Monotonic Stack (contribution technique)', topic:'Stack', code:
+`int sumSubarrayMins(vector<int>& arr){
+    const int MOD = 1e9 + 7;
+    int n = arr.size();
+    vector<int> left(n), right(n);
+    stack<int> st;
+    for(int i = 0; i < n; i++){
+        while(!st.empty() && arr[st.top()] > arr[i]) st.pop();
+        left[i] = st.empty() ? -1 : st.top();
+        st.push(i);
+    }
+    while(!st.empty()) st.pop();
+    for(int i = n - 1; i >= 0; i--){
+        while(!st.empty() && arr[st.top()] >= arr[i]) st.pop();
+        right[i] = st.empty() ? n : st.top();
+        st.push(i);
+    }
+    long long sum = 0;
+    for(int i = 0; i < n; i++){
+        long long leftCount = i - left[i];
+        long long rightCount = right[i] - i;
+        sum = (sum + (long long)arr[i] * leftCount % MOD * rightCount) % MOD;
+    }
+    return (int)sum;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Asteroid Collision', difficulty:'Medium', leetcode:735, approaches:[
+          { label:'Optimal · Stack Simulation', topic:'Stack', code:
+`vector<int> asteroidCollision(vector<int>& arr){
+    vector<int> st;
+    for(int a : arr){
+        bool alive = true;
+        while(alive && a < 0 && !st.empty() && st.back() > 0){
+            if(st.back() < -a){ st.pop_back(); continue; }
+            else if(st.back() == -a) st.pop_back();
+            alive = false;
+        }
+        if(alive) st.push_back(a);
+    }
+    return st;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Sum of Subarray Ranges', difficulty:'Medium', leetcode:2104, approaches:[
+          { label:'Optimal · Monotonic Stack (sum of max - sum of min)', topic:'Stack', code:
+`long long sumSubarrayRanges(vector<int>& arr){
+    int n = arr.size();
+    auto sumSub = [&](bool findMax) -> long long {
+        vector<int> left(n), right(n);
+        stack<int> st;
+        for(int i = 0; i < n; i++){
+            while(!st.empty() && (findMax ? arr[st.top()] < arr[i] : arr[st.top()] > arr[i])) st.pop();
+            left[i] = st.empty() ? -1 : st.top();
+            st.push(i);
+        }
+        while(!st.empty()) st.pop();
+        for(int i = n - 1; i >= 0; i--){
+            while(!st.empty() && (findMax ? arr[st.top()] <= arr[i] : arr[st.top()] >= arr[i])) st.pop();
+            right[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+        long long sum = 0;
+        for(int i = 0; i < n; i++)
+            sum += (long long)arr[i] * (i - left[i]) * (right[i] - i);
+        return sum;
+    };
+    return sumSub(true) - sumSub(false);
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Remove K Digits', difficulty:'Medium', leetcode:402, approaches:[
+          { label:'Optimal · Monotonic Stack (greedy)', topic:'Stack', code:
+`string removeKdigits(string num, int k){
+    string st;
+    for(char c : num){
+        while(!st.empty() && k > 0 && st.back() > c){ st.pop_back(); k--; }
+        st.push_back(c);
+    }
+    while(k-- > 0) st.pop_back();
+    int i = 0;
+    while(i < (int)st.size() - 1 && st[i] == '0') i++;
+    st = st.substr(i);
+    return st.empty() ? "0" : st;
+}
+// Time: O(n)   Space: O(n)` } ] },
+        { name:'Largest rectangle in a histogram', difficulty:'Hard', leetcode:84, approaches:[
+          { label:'Optimal · Monotonic Stack', topic:'Stack', code:
+`int largestRectangleArea(vector<int>& heights){
+    stack<int> st;
+    int maxArea = 0, n = heights.size();
+    for(int i = 0; i <= n; i++){
+        int h = (i == n) ? 0 : heights[i];
+        while(!st.empty() && heights[st.top()] >= h){
+            int height = heights[st.top()]; st.pop();
+            int width = st.empty() ? i : i - st.top() - 1;
+            maxArea = max(maxArea, height * width);
+        }
+        st.push(i);
+    }
+    return maxArea;
+}
+// Time: O(n)   Space: O(n)` },
+          { label:'Brute Force · Expand Around Each Bar', topic:'Arrays', code:
+`int largestRectangleAreaBrute(vector<int>& heights){
+    int n = heights.size(), maxArea = 0;
+    for(int i = 0; i < n; i++){
+        int minH = heights[i];
+        for(int j = i; j < n; j++){
+            minH = min(minH, heights[j]);
+            maxArea = max(maxArea, minH * (j - i + 1));
+        }
+    }
+    return maxArea;
+}
+// Time: O(n^2)   Space: O(1)` } ] },
+        { name:'Maximum Rectangles', difficulty:'Hard', leetcode:85, approaches:[
+          { label:'Optimal · Histogram Trick per Row', topic:'Stack', code:
+`int largestRectangleArea(vector<int>& heights); // from "Largest rectangle in a histogram"
+int maximalRectangle(vector<vector<char>>& matrix){
+    if(matrix.empty()) return 0;
+    int n = matrix.size(), m = matrix[0].size();
+    vector<int> heights(m, 0);
+    int maxArea = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < m; j++)
+            heights[j] = (matrix[i][j] == '1') ? heights[j] + 1 : 0;
+        maxArea = max(maxArea, largestRectangleArea(heights));
+    }
+    return maxArea;
+}
+// Time: O(n*m)   Space: O(m)` } ] },
+      ]},
+      { name:'Implementation Problems', questions:[
+        { name:'Sliding Window Maximum', difficulty:'Hard', leetcode:239, approaches:[
+          { label:'Optimal · Monotonic Deque', topic:'Stack', code:
+`vector<int> maxSlidingWindow(vector<int>& arr, int k){
+    deque<int> dq; // stores indices, front = current window's max
+    vector<int> res;
+    for(int i = 0; i < (int)arr.size(); i++){
+        if(!dq.empty() && dq.front() <= i - k) dq.pop_front();
+        while(!dq.empty() && arr[dq.back()] < arr[i]) dq.pop_back();
+        dq.push_back(i);
+        if(i >= k - 1) res.push_back(arr[dq.front()]);
+    }
+    return res;
+}
+// Time: O(n)   Space: O(k)` },
+          { label:'Brute Force · Recompute Max per Window', topic:'Arrays', code:
+`vector<int> maxSlidingWindowBrute(vector<int>& arr, int k){
+    vector<int> res;
+    for(int i = 0; i + k <= (int)arr.size(); i++){
+        int mx = arr[i];
+        for(int j = i; j < i + k; j++) mx = max(mx, arr[j]);
+        res.push_back(mx);
+    }
+    return res;
+}
+// Time: O(n*k)   Space: O(1) extra` } ] },
+        { name:'Stock span problem', difficulty:'Hard', leetcode:901, approaches:[
+          { label:'Optimal · Monotonic Stack', topic:'Stack', code:
+`class StockSpanner {
+    stack<pair<int,int>> st; // {price, span}
+public:
+    int next(int price){
+        int span = 1;
+        while(!st.empty() && st.top().first <= price){
+            span += st.top().second;
+            st.pop();
+        }
+        st.push({price, span});
+        return span;
+    }
+};
+// Time: O(1) amortized per call   Space: O(n)` } ] },
+        { name:'Celebrity Problem', difficulty:'Hard', approaches:[
+          { label:'Optimal · Two Pointer Elimination', topic:'Arrays', code:
+`int findCelebrity(vector<vector<int>>& M, int n){
+    int top = 0, down = n - 1;
+    while(top < down){
+        if(M[top][down] == 1) top++;   // top knows down -> top can't be the celebrity
+        else down--;                    // top doesn't know down -> down can't be the celebrity
+    }
+    int candidate = top;
+    for(int i = 0; i < n; i++){
+        if(i == candidate) continue;
+        if(M[candidate][i] == 1 || M[i][candidate] == 0) return -1;
+    }
+    return candidate;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'LRU Cache', difficulty:'Medium', leetcode:146, approaches:[
+          { label:'Optimal · Hashmap + Doubly Linked List', topic:'LinkedList', code:
+`class LRUCache {
+    int capacity;
+    list<pair<int,int>> order; // {key, value}, front = most recently used
+    unordered_map<int, list<pair<int,int>>::iterator> mp;
+public:
+    LRUCache(int cap) : capacity(cap) {}
+    int get(int key){
+        if(mp.find(key) == mp.end()) return -1;
+        auto it = mp[key];
+        int val = it->second;
+        order.erase(it);
+        order.push_front({key, val});
+        mp[key] = order.begin();
+        return val;
+    }
+    void put(int key, int value){
+        if(mp.find(key) != mp.end()) order.erase(mp[key]);
+        else if((int)order.size() == capacity){
+            auto last = order.back();
+            mp.erase(last.first);
+            order.pop_back();
+        }
+        order.push_front({key, value});
+        mp[key] = order.begin();
+    }
+};
+// Time: O(1) per operation   Space: O(capacity)` } ] },
+        { name:'LFU Cache', difficulty:'Hard', leetcode:460, approaches:[
+          { label:'Optimal · Hashmaps + Frequency Buckets', topic:'LinkedList', code:
+`class LFUCache {
+    int capacity, minFreq;
+    unordered_map<int,int> keyToVal, keyToFreq;
+    unordered_map<int, list<int>> freqToKeys;
+    unordered_map<int, list<int>::iterator> keyToIter;
+    void touch(int key){
+        int freq = keyToFreq[key];
+        freqToKeys[freq].erase(keyToIter[key]);
+        if(freqToKeys[freq].empty() && minFreq == freq) minFreq++;
+        keyToFreq[key] = freq + 1;
+        freqToKeys[freq + 1].push_front(key);
+        keyToIter[key] = freqToKeys[freq + 1].begin();
+    }
+public:
+    LFUCache(int cap) : capacity(cap), minFreq(0) {}
+    int get(int key){
+        if(keyToVal.find(key) == keyToVal.end()) return -1;
+        touch(key);
+        return keyToVal[key];
+    }
+    void put(int key, int value){
+        if(capacity == 0) return;
+        if(keyToVal.count(key)){ keyToVal[key] = value; touch(key); return; }
+        if((int)keyToVal.size() == capacity){
+            int evict = freqToKeys[minFreq].back();
+            freqToKeys[minFreq].pop_back();
+            keyToVal.erase(evict); keyToFreq.erase(evict); keyToIter.erase(evict);
+        }
+        keyToVal[key] = value;
+        keyToFreq[key] = 1;
+        freqToKeys[1].push_front(key);
+        keyToIter[key] = freqToKeys[1].begin();
+        minFreq = 1;
+    }
+};
+// Time: O(1) per operation   Space: O(capacity)` } ] },
+      ]},
+    ]
+  },
   { id:'sliding-window', title:'Sliding Window & Two Pointer Combined Problems', total:12, sections:[] },
   { id:'heaps', title:'Heaps [Learning, Medium, Hard Problems]', total:17, sections:[] },
   { id:'greedy', title:'Greedy Algorithms [Easy, Medium/Hard]', total:15, sections:[] },
