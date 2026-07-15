@@ -3293,7 +3293,276 @@ public:
       ]},
     ]
   },
-  { id:'sliding-window', title:'Sliding Window & Two Pointer Combined Problems', total:12, sections:[] },
+  {
+    id:'sliding-window', title:'Sliding Window & Two Pointer Combined Problems', total:12,
+    sections:[
+      { name:'Medium Problems', questions:[
+        { name:'Longest Substring Without Repeating Characters', difficulty:'Medium', leetcode:3, approaches:[
+          { label:'Optimal · Sliding Window (last-seen index)', topic:'Sliding Window', code:
+`int lengthOfLongestSubstring(string s){
+    unordered_map<char,int> lastSeen;
+    int left = 0, maxLen = 0;
+    for(int right = 0; right < (int)s.size(); right++){
+        if(lastSeen.count(s[right]) && lastSeen[s[right]] >= left)
+            left = lastSeen[s[right]] + 1;
+        lastSeen[s[right]] = right;
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(min(n, charset size))` },
+          { label:'Brute Force · Check Every Substring', topic:'Strings', code:
+`int lengthOfLongestSubstringBrute(string s){
+    int n = s.size(), maxLen = 0;
+    for(int i = 0; i < n; i++){
+        unordered_set<char> seen;
+        for(int j = i; j < n; j++){
+            if(seen.count(s[j])) break;
+            seen.insert(s[j]);
+            maxLen = max(maxLen, j - i + 1);
+        }
+    }
+    return maxLen;
+}
+// Time: O(n^2)   Space: O(n)` } ] },
+        { name:'Max Consecutive Ones III', difficulty:'Medium', leetcode:1004, approaches:[
+          { label:'Optimal · Sliding Window (allow k zeros)', topic:'Sliding Window', code:
+`int longestOnes(vector<int>& arr, int k){
+    int left = 0, zeros = 0, maxLen = 0;
+    for(int right = 0; right < (int)arr.size(); right++){
+        if(arr[right] == 0) zeros++;
+        while(zeros > k){
+            if(arr[left] == 0) zeros--;
+            left++;
+        }
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Fruit Into Baskets', difficulty:'Medium', leetcode:904, approaches:[
+          { label:'Optimal · Sliding Window (at most 2 distinct types)', topic:'Sliding Window', code:
+`int totalFruit(vector<int>& arr){
+    unordered_map<int,int> count;
+    int left = 0, maxLen = 0;
+    for(int right = 0; right < (int)arr.size(); right++){
+        count[arr[right]]++;
+        while(count.size() > 2){
+            count[arr[left]]--;
+            if(count[arr[left]] == 0) count.erase(arr[left]);
+            left++;
+        }
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(1)   Map holds at most 3 keys at a time` } ] },
+        { name:'Longest Repeating Character Replacement', difficulty:'Hard', leetcode:424, approaches:[
+          { label:'Optimal · Sliding Window (track max frequency char)', topic:'Sliding Window', code:
+`int characterReplacement(string s, int k){
+    unordered_map<char,int> count;
+    int left = 0, maxFreq = 0, maxLen = 0;
+    for(int right = 0; right < (int)s.size(); right++){
+        count[s[right]]++;
+        maxFreq = max(maxFreq, count[s[right]]);
+        while((right - left + 1) - maxFreq > k){
+            count[s[left]]--;
+            left++;
+        }
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(1) — at most 26 letters tracked` } ] },
+        { name:'Binary Subarrays With Sum', difficulty:'Hard', leetcode:930, approaches:[
+          { label:'Optimal · "At Most Sum" Trick', topic:'Sliding Window', code:
+`int atMostSum(vector<int>& arr, int goal){
+    if(goal < 0) return 0;
+    int left = 0, sum = 0, count = 0;
+    for(int right = 0; right < (int)arr.size(); right++){
+        sum += arr[right];
+        while(sum > goal){ sum -= arr[left]; left++; }
+        count += right - left + 1;
+    }
+    return count;
+}
+int numSubarraysWithSum(vector<int>& arr, int goal){
+    return atMostSum(arr, goal) - atMostSum(arr, goal - 1);
+}
+// Time: O(n)   Space: O(1)   exact(goal) = atMost(goal) - atMost(goal-1)` } ] },
+        { name:'Count number of Nice subarrays', difficulty:'Hard', leetcode:1248, approaches:[
+          { label:'Optimal · "At Most K" Trick (odd-count sliding window)', topic:'Sliding Window', code:
+`int atMostK(vector<int>& arr, int k){
+    if(k < 0) return 0;
+    int left = 0, oddCount = 0, count = 0;
+    for(int right = 0; right < (int)arr.size(); right++){
+        if(arr[right] % 2 != 0) oddCount++;
+        while(oddCount > k){
+            if(arr[left] % 2 != 0) oddCount--;
+            left++;
+        }
+        count += right - left + 1;
+    }
+    return count;
+}
+int numberOfSubarrays(vector<int>& arr, int k){
+    return atMostK(arr, k) - atMostK(arr, k - 1);
+}
+// Time: O(n)   Space: O(1)   Same "at most" pattern as Binary Subarrays With Sum` } ] },
+        { name:'Number of Substrings Containing All Three Characters', difficulty:'Hard', leetcode:1358, approaches:[
+          { label:'Optimal · Track Last Seen Index of Each Character', topic:'Sliding Window', code:
+`int numberOfSubstrings(string s){
+    vector<int> lastSeen(3, -1);
+    int count = 0;
+    for(int i = 0; i < (int)s.size(); i++){
+        lastSeen[s[i] - 'a'] = i;
+        count += 1 + min({lastSeen[0], lastSeen[1], lastSeen[2]});
+    }
+    return count;
+}
+// Time: O(n)   Space: O(1)` } ] },
+        { name:'Maximum Points You Can Obtain from Cards', difficulty:'Medium', leetcode:1423, approaches:[
+          { label:'Optimal · Sliding Window on the Complement', topic:'Sliding Window', code:
+`int maxScore(vector<int>& cardPoints, int k){
+    int n = cardPoints.size();
+    int windowLen = n - k;
+    int total = 0;
+    for(int x : cardPoints) total += x;
+    if(windowLen == 0) return total;
+    int windowSum = 0;
+    for(int i = 0; i < windowLen; i++) windowSum += cardPoints[i];
+    int minWindow = windowSum;
+    for(int i = windowLen; i < n; i++){
+        windowSum += cardPoints[i] - cardPoints[i - windowLen];
+        minWindow = min(minWindow, windowSum);
+    }
+    return total - minWindow;
+}
+// Time: O(n)   Space: O(1)   Finds the min-sum middle window to exclude` },
+          { label:'Brute Force · Try Every Left/Right Split', topic:'Arrays', code:
+`int maxScoreBrute(vector<int>& cardPoints, int k){
+    int n = cardPoints.size(), best = 0;
+    for(int left = 0; left <= k; left++){
+        int right = k - left;
+        int sum = 0;
+        for(int i = 0; i < left; i++) sum += cardPoints[i];
+        for(int i = 0; i < right; i++) sum += cardPoints[n - 1 - i];
+        best = max(best, sum);
+    }
+    return best;
+}
+// Time: O(k^2)   Space: O(1)` } ] },
+      ]},
+      { name:'Hard Problems', questions:[
+        { name:'Longest Substring With At Most K Distinct Characters', difficulty:'Hard', leetcode:340, approaches:[
+          { label:'Optimal · Sliding Window with Frequency Map', topic:'Sliding Window', code:
+`int lengthOfLongestSubstringKDistinct(string s, int k){
+    unordered_map<char,int> count;
+    int left = 0, maxLen = 0;
+    for(int right = 0; right < (int)s.size(); right++){
+        count[s[right]]++;
+        while((int)count.size() > k){
+            count[s[left]]--;
+            if(count[s[left]] == 0) count.erase(s[left]);
+            left++;
+        }
+        maxLen = max(maxLen, right - left + 1);
+    }
+    return maxLen;
+}
+// Time: O(n)   Space: O(k)` } ] },
+        { name:'Subarrays with K Different Integers', difficulty:'Medium', leetcode:992, approaches:[
+          { label:'Optimal · "At Most K Distinct" Trick', topic:'Sliding Window', code:
+`int atMostKDistinct(vector<int>& arr, int k){
+    unordered_map<int,int> count;
+    int left = 0, res = 0;
+    for(int right = 0; right < (int)arr.size(); right++){
+        count[arr[right]]++;
+        while((int)count.size() > k){
+            count[arr[left]]--;
+            if(count[arr[left]] == 0) count.erase(arr[left]);
+            left++;
+        }
+        res += right - left + 1;
+    }
+    return res;
+}
+int subarraysWithKDistinct(vector<int>& arr, int k){
+    return atMostKDistinct(arr, k) - atMostKDistinct(arr, k - 1);
+}
+// Time: O(n)   Space: O(k)` } ] },
+        { name:'Minimum Window Substring', difficulty:'Hard', leetcode:76, approaches:[
+          { label:'Optimal · Sliding Window with Match Counting', topic:'Sliding Window', code:
+`string minWindow(string s, string t){
+    unordered_map<char,int> need;
+    for(char c : t) need[c]++;
+    int required = need.size(), formed = 0;
+    unordered_map<char,int> windowCounts;
+    int left = 0, bestLen = INT_MAX, bestLeft = 0;
+    for(int right = 0; right < (int)s.size(); right++){
+        char c = s[right];
+        windowCounts[c]++;
+        if(need.count(c) && windowCounts[c] == need[c]) formed++;
+        while(formed == required){
+            if(right - left + 1 < bestLen){ bestLen = right - left + 1; bestLeft = left; }
+            char lc = s[left];
+            windowCounts[lc]--;
+            if(need.count(lc) && windowCounts[lc] < need[lc]) formed--;
+            left++;
+        }
+    }
+    return bestLen == INT_MAX ? "" : s.substr(bestLeft, bestLen);
+}
+// Time: O(n + m)   Space: O(n + m)` },
+          { label:'Brute Force · Check Every Substring', topic:'Strings', code:
+`string minWindowBrute(string s, string t){
+    unordered_map<char,int> need;
+    for(char c : t) need[c]++;
+    int n = s.size(), bestLen = INT_MAX, bestLeft = 0;
+    for(int i = 0; i < n; i++){
+        unordered_map<char,int> window;
+        int matched = 0, required = need.size();
+        for(int j = i; j < n; j++){
+            window[s[j]]++;
+            if(need.count(s[j]) && window[s[j]] == need[s[j]]) matched++;
+            if(matched == required){
+                if(j - i + 1 < bestLen){ bestLen = j - i + 1; bestLeft = i; }
+                break;
+            }
+        }
+    }
+    return bestLen == INT_MAX ? "" : s.substr(bestLeft, bestLen);
+}
+// Time: O(n^2)   Space: O(n)` } ] },
+        { name:'Minimum Window Subsequence', difficulty:'Hard', leetcode:727, approaches:[
+          { label:'Optimal · Two Pointer (expand then contract)', topic:'Two Pointer', code:
+`string minWindow(string s, string t){
+    int n = s.size(), m = t.size();
+    int bestLen = INT_MAX, bestStart = -1;
+    int i = 0;
+    while(i < n){
+        int j = 0, start = i;
+        while(i < n){                  // expand until t is fully matched
+            if(s[i] == t[j]){ j++; if(j == m) break; }
+            i++;
+        }
+        if(j < m) break;               // t can't be matched again, stop
+        int end = i;
+        j = m - 1;
+        while(i >= start){             // contract from the match backward
+            if(s[i] == t[j]){ j--; if(j < 0) break; }
+            i--;
+        }
+        i++;                           // i is now the start of this valid window
+        if(end - i + 1 < bestLen){ bestLen = end - i + 1; bestStart = i; }
+        i++;                           // move on to search for the next window
+    }
+    return bestStart == -1 ? "" : s.substr(bestStart, bestLen);
+}
+// Time: O(n*m) worst case   Space: O(1)` } ] },
+      ]},
+    ]
+  },
   { id:'heaps', title:'Heaps [Learning, Medium, Hard Problems]', total:17, sections:[] },
   { id:'greedy', title:'Greedy Algorithms [Easy, Medium/Hard]', total:15, sections:[] },
   { id:'binary-trees', title:'Binary Trees [Traversals, Medium and Hard Problems]', total:38, sections:[] },
