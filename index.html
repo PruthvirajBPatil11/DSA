@@ -20,6 +20,11 @@
     --easy:#5fbf82;
     --medium:#e8b23d;
     --hard:#e2685f;
+    --stl-seq:#57c7ff;
+    --stl-adapt:#ffb454;
+    --stl-set:#6fdc8c;
+    --stl-map:#c792ea;
+    --stl-algo:#ff6e87;
     --radius:10px;
   }
   *{box-sizing:border-box;}
@@ -184,6 +189,62 @@
     text-align:center;color:var(--text-dim);font-size:13px;
   }
   .no-results{color:var(--text-dim);font-size:13px;padding:20px 0;}
+
+  /* ---------- STL Revision page ---------- */
+  .stl-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:22px;}
+  .stl-legend span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-dim);}
+  .stl-legend i{width:8px;height:8px;border-radius:2px;display:inline-block;}
+
+  .stl-progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .stl-progress-label{font-size:12px;color:var(--text-dim);white-space:nowrap;}
+  .stl-progress-track{flex:1;height:6px;border-radius:6px;background:var(--panel);border:1px solid var(--border);overflow:hidden;}
+  .stl-progress-fill{height:100%;background:linear-gradient(90deg,var(--stl-seq),var(--stl-set));width:0%;transition:width .3s ease;}
+
+  .stl-section{margin-bottom:28px;}
+  .stl-section-head{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+  .stl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .stl-section-head h3{font-size:15px;margin:0;font-weight:600;}
+  .stl-section-head .tagline{font-size:11.5px;color:var(--text-dim);}
+
+  .stl-sub{margin-bottom:14px;}
+  .stl-sub-head{
+    display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;
+    color:var(--text-dim);margin:0 0 6px 2px;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .stl-sub-head b{color:var(--text);text-transform:none;letter-spacing:0;font-size:13.5px;}
+  .stl-tag{
+    font-size:10px;padding:2px 7px;border-radius:5px;background:var(--panel-2);
+    color:var(--text-dim);border:1px solid var(--border);text-transform:none;font-weight:500;
+  }
+  .stl-done{
+    font-size:9.5px;color:var(--easy);border:1px solid var(--easy);padding:1px 6px;
+    border-radius:20px;text-transform:none;font-weight:500;
+  }
+
+  .stl-row{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:8px;overflow:hidden;
+  }
+  .stl-row-head{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;}
+  .stl-row-head:hover{background:var(--panel-2);}
+  .stl-check{
+    flex-shrink:0;width:17px;height:17px;border-radius:5px;border:1.5px solid var(--text-dim);
+    display:flex;align-items:center;justify-content:center;transition:all .15s ease;
+  }
+  .stl-row.checked .stl-check{background:var(--easy);border-color:var(--easy);}
+  .stl-row.checked .stl-term{opacity:.55;text-decoration:line-through;text-decoration-color:var(--text-dim);}
+  .stl-term{flex:1;font-size:14px;}
+  .stl-term b{font-weight:600;}
+  .stl-flag{font-size:10.5px;color:var(--medium);flex-shrink:0;}
+
+  .stl-body{border-top:1px solid var(--border);padding:16px;display:none;}
+  .stl-row.open .stl-body{display:block;}
+  .stl-row.open .q-arrow{transform:rotate(90deg);}
+  .stl-expl{font-size:13px;color:var(--text-dim);margin:0 0 12px;line-height:1.55;}
+  .stl-expl b{color:var(--text);font-weight:600;}
+  .stl-out{font-size:12px;color:var(--teal);margin-top:8px;}
+  .stl-out b{color:var(--teal);}
+
 
   @media (max-width:560px){
     .search{margin-left:0;width:100%;}
@@ -5860,8 +5921,243 @@ int kosarajuSCC(int n, vector<vector<int>>& adj){
   { id:'strings-adv', title:'Strings', total:9, sections:[] },
 ];
 
+/* ======================= STL REVISION DATA ======================= */
+const STL_DATA = [
+  { color:'stl-seq', title:'Sequence Containers', tagline:'pair · vector · list · deque', subs:[
+    { name:'pair', tag:'utility library', items:[
+      { id:'pair-1', term:'make_pair, .first / .second',
+        expl:'A pair bundles two values — possibly of different types — into a single object, accessed through .first and .second. Great for key–value style data.',
+        code:`pair<int, string> student;
+student.first = 1;
+student.second = "Alice";
+cout << student.first << ", " << student.second;`,
+        out:'1, Alice' }
+    ]},
+    { name:'vector', items:[
+      { id:'v-1', term:'initialisation', expl:'A vector is a dynamic array — it resizes itself automatically as elements are added or removed, unlike a fixed-size array.',
+        code:`vector<int> v = {1, 2, 3, 4, 5};
+for (int i : v) cout << i << " ";`, out:'1 2 3 4 5' },
+      { id:'v-2', term:'push_back', expl:'Appends a new element to the end of the vector — the standard way to grow it one item at a time.',
+        code:`vector<int> v = {1, 2, 3};
+v.push_back(4);
+v.push_back(5);`, out:'1 2 3 4 5' },
+      { id:'v-3', term:'front', expl:"Returns a reference to the vector's first element without removing it.",
+        code:`vector<int> v = {10, 20, 30};
+cout << v.front();`, out:'10' },
+      { id:'v-4', term:'back', expl:"Returns a reference to the vector's last element.",
+        code:`vector<int> v = {10, 20, 30};
+cout << v.back();`, out:'30' },
+      { id:'v-5', term:'iterator', expl:'Iterators behave like pointers, letting you walk through the vector from begin() to end().',
+        code:`for (auto it = v.begin(); it != v.end(); ++it)
+    cout << *it << " ";`, out:'10 20 30' },
+      { id:'v-6', term:'for each', expl:"C++11's range-based for loop gives a cleaner syntax for visiting every element.",
+        code:`for (int i : v) cout << i << " ";`, out:'10 20 30' },
+      { id:'v-7', term:'erase', expl:'Removes the element at a given position; everything after it shifts one slot left and the vector shrinks by one.',
+        code:`vector<int> v = {10, 20, 30};
+v.erase(v.begin() + 1);`, out:'10 30' },
+      { id:'v-8', term:'insert', expl:'Inserts an element at a chosen position, shifting later elements right and growing the vector.',
+        code:`vector<int> v = {10, 30};
+v.insert(v.begin() + 1, 20);`, out:'10 20 30' },
+      { id:'v-9', term:'size', expl:'Returns how many elements the vector currently holds.',
+        code:`vector<int> v = {10, 20, 30};
+cout << v.size();`, out:'3' },
+      { id:'v-10', term:'access element', expl:'Elements can be read or written with operator[] or the bounds-checked .at().',
+        code:`vector<int> v = {10, 20, 30};
+cout << v[1];`, out:'20' },
+      { id:'v-11', term:'swap', expl:'Swaps the contents of two vectors efficiently — by swapping internal pointers rather than copying every element.',
+        code:`vector<int> v1 = {1,2,3}, v2 = {4,5,6};
+swap(v1, v2);`, out:'v1 becomes 4 5 6' },
+      { id:'v-12', term:'clear', expl:"Empties the vector completely — size becomes 0, though the underlying memory isn't necessarily released.",
+        code:`vector<int> v = {10, 20, 30};
+v.clear();
+cout << v.size();`, out:'0' }
+    ]},
+    { name:'list', items:[
+      { id:'l-1', term:'push_front / emplace_front', expl:'Adds a new element to the front of a (doubly-linked) list; emplace_front builds it in place instead of copying.',
+        code:`list<int> lst;
+lst.push_front(20);
+lst.emplace_front(10);`, out:'10 20' },
+      { id:'l-2', term:'front', expl:'Returns a reference to the first element of the list.',
+        code:`list<int> lst = {10, 20, 30};
+cout << lst.front();`, out:'10' }
+    ]},
+    { name:'deque', items:[
+      { id:'dq-1', term:'push_back/front, pop_back/front, operator[]', expl:'A deque supports fast insertion and removal at BOTH ends — more flexible than vector or list when you need that.',
+        code:`deque<int> dq = {10, 20, 30};
+dq.push_front(0);
+dq.push_back(40);`, out:'0 10 20 30 40' }
+    ]}
+  ]},
+
+  { color:'stl-adapt', title:'Container Adapters', tagline:'stack · queue · priority_queue', subs:[
+    { name:'stack', tag:'LIFO', done:true, items:[
+      { id:'st-1', term:'push / emplace', expl:'push adds an element to the top of the stack; emplace constructs it there directly.',
+        code:`stack<int> s;
+s.push(10);
+s.emplace(20);`, out:'top is 20' },
+      { id:'st-2', term:'top', expl:'Peeks at the top element without removing it.',
+        code:`s.push(10); s.push(20);
+cout << s.top();`, out:'20' },
+      { id:'st-3', term:'pop', expl:'Removes the top element — last one in comes out first.',
+        code:`s.push(10); s.push(20);
+s.pop();
+cout << s.top();`, out:'10' },
+      { id:'st-4', term:'size', expl:'Number of elements currently on the stack.',
+        code:`cout << s.size();`, out:'2' },
+      { id:'st-5', term:'swap', expl:'Swaps the contents of two stacks.',
+        code:`s1.swap(s2);`, out:'tops swap between s1 and s2' },
+      { id:'st-6', term:'empty', expl:'Checks whether the stack has zero elements.',
+        code:`cout << (s.empty() ? "Yes" : "No");`, out:'Yes, until you push something' }
+    ]},
+    { name:'queue', tag:'FIFO', done:true, items:[
+      { id:'q-1', term:'push / emplace', expl:'push adds an element to the back of the queue (FIFO); emplace constructs it there directly.',
+        code:`queue<int> q;
+q.push(10);
+q.emplace(20);`, out:'front is 10' },
+      { id:'q-2', term:'front', expl:'Returns the element at the front — the next one due to leave the queue.',
+        code:`q.push(10); q.push(20);
+cout << q.front();`, out:'10' },
+      { id:'q-3', term:'pop', expl:'Removes the front element from the queue.',
+        code:`q.push(10); q.push(20);
+q.pop();
+cout << q.front();`, out:'20' },
+      { id:'q-4', term:'size', expl:'Number of elements currently in the queue.',
+        code:`cout << q.size();`, out:'2' },
+      { id:'q-5', term:'swap', expl:'Swaps the contents of two queues.',
+        code:`q1.swap(q2);`, out:'fronts swap between q1 and q2' },
+      { id:'q-6', term:'empty', expl:'Checks whether the queue has zero elements.',
+        code:`cout << (q.empty() ? "Yes" : "No");`, out:'Yes, until you push something' }
+    ]},
+    { name:'priority_queue', tag:'heap, internally', done:true, items:[
+      { id:'pq-1', term:'top', flag:'Not covered in your source notes — general STL behavior below.',
+        expl:'Returns the largest element (max-heap by default) without removing it.',
+        code:`priority_queue<int> pq;
+pq.push(10); pq.push(30); pq.push(20);
+cout << pq.top();`, out:'30' },
+      { id:'pq-2', term:'pop', expl:'Removes the current top (largest) element; the heap re-settles automatically.',
+        code:`pq.pop();
+cout << pq.top();`, out:'20' },
+      { id:'pq-3', term:'push / emplace', expl:'Adds a new element and the underlying heap reorders itself to keep the largest on top.',
+        code:`pq.push(25);`, out:'25 becomes new top if it is largest' },
+      { id:'pq-4', term:'empty', expl:'Checks whether the priority_queue has zero elements.',
+        code:`cout << (pq.empty() ? "Yes" : "No");`, out:"No, once you've pushed" },
+      { id:'pq-5', term:'size', expl:'Number of elements currently in the priority_queue.',
+        code:`cout << pq.size();`, out:'depends on contents' }
+    ]}
+  ]},
+
+  { color:'stl-set', title:'Set Family', tagline:'set · multiset · unordered_set', subs:[
+    { name:'set', items:[
+      { id:'s-1', term:'insert / emplace', expl:"Adds an element if it isn't already present; emplace builds it in place. Duplicates are silently ignored, and the set stays sorted.",
+        code:`set<int> s;
+s.insert(10);
+s.insert(20);
+s.emplace(15);`, out:'10 15 20' },
+      { id:'s-2', term:'find()', expl:"Looks up an element and returns an iterator to it, or to end() if it isn't there — the standard way to check existence.",
+        code:`set<int> s = {10, 20, 30};
+auto it = s.find(20);
+if (it != s.end()) cout << "found";`, out:'found' },
+      { id:'s-3', term:'erase', flag:'Works by iterator, by value, or by an (it1, it2) range.',
+        expl:'Removes an element (or a whole range) from the set.',
+        code:`set<int> s = {10, 20, 30};
+s.erase(20);`, out:'10 30' },
+      { id:'s-4', term:'count', flag:'Not spelled out in your source notes — general behavior below.',
+        expl:'Returns 1 if the element exists in the set, 0 otherwise (a plain set can never have duplicates).',
+        code:`cout << s.count(20);`, out:'1 or 0' },
+      { id:'s-5', term:'lower_bound', expl:'Returns an iterator to the first element that is not less than the given value.',
+        code:`set<int> s = {10, 20, 30};
+auto it = s.lower_bound(20);
+cout << *it;`, out:'20' },
+      { id:'s-6', term:'upper_bound', expl:'Returns an iterator to the first element strictly greater than the given value.',
+        code:`auto it = s.upper_bound(20);
+cout << *it;`, out:'30' }
+    ]},
+    { name:'multiset', items:[
+      { id:'ms-1', term:'insert', expl:'Just like set, but multiset allows duplicate values and keeps everything in sorted order.',
+        code:`multiset<int> ms;
+ms.insert(10); ms.insert(20); ms.insert(20);`, out:'10 20 20' },
+      { id:'ms-2', term:'erase', expl:'Removing by value takes out ALL occurrences of that value by default.',
+        code:`multiset<int> ms = {10, 20, 20};
+ms.erase(20);`, out:'10' }
+    ]},
+    { name:'unordered_set', items:[
+      { id:'us-1', term:"insert / find / erase — lower_bound & upper_bound don't apply",
+        expl:"Stores unique elements like set, but unsorted and hash-based — faster average lookup, with no ordering guarantee. Because there's no order, lower_bound/upper_bound have no meaningful result here.",
+        code:`unordered_set<int> us;
+us.insert(10); us.insert(20);
+auto it = us.find(20);`, out:'elements print in arbitrary order' }
+    ]}
+  ]},
+
+  { color:'stl-map', title:'Map Family', tagline:'map · multimap', subs:[
+    { name:'map', done:true, items:[
+      { id:'m-1', term:'insert / emplace / mpp[key] = value', expl:'Key–value pairs can be added via insert, emplace, or plain assignment; all three keep the map sorted by key.',
+        code:`map<int, string> m;
+m.insert({1, "one"});
+m.emplace(2, "two");
+m[3] = "three";`, out:'1: one, 2: two, 3: three' },
+      { id:'m-2', term:'find', expl:'Looks up a key and returns an iterator to its pair, or end() if the key is missing — average O(log n).',
+        code:`auto it = m.find(2);
+if (it != m.end()) cout << it->second;`, out:'two' },
+      { id:'m-3', term:'empty', expl:'True if the map has no entries at all.',
+        code:`map<int,string> m;
+cout << (m.empty() ? "Empty" : "Not Empty");`, out:'Empty' },
+      { id:'m-4', term:'size', flag:'Source notes only mention the concept, not full code.',
+        expl:'Returns how many key-value pairs the map currently holds.',
+        code:`cout << m.size();`, out:'3' },
+      { id:'m-5', term:'lower_bound (>=)', expl:'Returns an iterator to the first entry whose key is not less than the given key.',
+        code:`auto it = m.lower_bound(2);
+cout << it->first << ": " << it->second;`, out:'2: two' },
+      { id:'m-6', term:'upper_bound (>)', expl:'Returns an iterator to the first entry whose key is strictly greater than the given key.',
+        code:`auto it = m.upper_bound(2);
+cout << it->first << ": " << it->second;`, out:'3: three' },
+      { id:'m-7', term:'unordered_map', flag:'Not covered in your source notes — general behavior below.',
+        expl:'Same idea as map, but hash-based and unsorted — faster average access, no key ordering.',
+        code:`unordered_map<int,string> um;
+um[1] = "one";`, out:'lookup is O(1) on average' }
+    ]},
+    { name:'multimap', done:true, items:[
+      { id:'mm-1', term:'equal_range', expl:'Returns a pair of iterators bracketing every entry that shares the given key — useful since multimap allows duplicate keys.',
+        code:`multimap<int,string> mm;
+mm.insert({1,"one"});
+mm.insert({1,"uno"});
+auto r = mm.equal_range(1);
+for (auto it = r.first; it != r.second; ++it)
+    cout << it->second << " ";`, out:'one uno' }
+    ]}
+  ]},
+
+  { color:'stl-algo', title:'Functions & Algorithms', tagline:'<algorithm>', subs:[
+    { name:'', items:[
+      { id:'a-1', term:'sort', expl:'Sorts a range into ascending order by default; pass a comparator for custom ordering.',
+        code:`vector<int> v = {3,1,4,1,5,9};
+sort(v.begin(), v.end());`, out:'1 1 3 4 5 9' },
+      { id:'a-2', term:'accumulate', expl:'Sums (folds) a range of values; lives in <numeric>.',
+        code:`int sum = accumulate(v.begin(), v.end(), 0);`, out:'Sum: 15' },
+      { id:'a-3', term:'count', expl:'Counts how many elements in a range equal a given value.',
+        code:`int c = count(v.begin(), v.end(), 1);`, out:'Count of 1: 3' },
+      { id:'a-4', term:'find', expl:'Returns an iterator to the first occurrence of a value in a range.',
+        code:`auto it = find(v.begin(), v.end(), 3);`, out:'Found: 3' },
+      { id:'a-5', term:'comparator', expl:'A custom function or functor passed to algorithms like sort to control the ordering.',
+        code:`bool cmp(int a, int b){ return a > b; }
+sort(v.begin(), v.end(), cmp);`, out:'9 5 4 3 1 1' },
+      { id:'a-6', term:'next_permutation', expl:'Rearranges a range into its next lexicographically larger permutation, wrapping to the smallest once it hits the largest.',
+        code:`vector<int> v = {1,2,3};
+next_permutation(v.begin(), v.end());`, out:'1 3 2' },
+      { id:'a-7', term:'max_element', expl:'Returns an iterator to the largest element in a range.',
+        code:`auto it = max_element(v.begin(), v.end());`, out:'Max Element: 9' },
+      { id:'a-8', term:'reverse', expl:'Reverses the order of elements in a range, in place.',
+        code:`reverse(v.begin(), v.end());`, out:'5 4 3 2 1' },
+      { id:'a-9', term:'pow', expl:'Raises a base to a power; comes from <cmath>.',
+        code:`double r = pow(2.0, 3.0);`, out:'2^3 = 8' }
+    ]}
+  ]}
+];
+
+
 /* ======================= STATE ======================= */
-let state = { view:'home', topicId:null, filter:'All', query:'', openQ:null, tab:{} };
+let state = { view:'home', topicId:null, filter:'All', query:'', openQ:null, tab:{},
+  stl:{ query:'', openItems:new Set(), checked:{} } };
 
 /* ======================= HELPERS ======================= */
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -5903,6 +6199,7 @@ function countAll(topic){
 function render(){
   const app = document.getElementById('app');
   if(state.view === 'home') app.innerHTML = renderHome();
+  else if(state.view === 'stl') app.innerHTML = renderSTL();
   else app.innerHTML = renderTopic();
   attachHandlers();
 }
@@ -5929,9 +6226,9 @@ function renderHome(){
       <div class="brand"><span class="mark"></span><h1>DSA Sheet</h1></div>
       <div class="top-right">
         <p style="margin:0;">Pick a topic, then a question — the optimal interview approach and its C++ code are one click away.</p>
-        <a class="stl-btn" href="cpp-stl-revision.html" target="_blank" rel="noopener">
+        <button class="stl-btn" data-action="stl">
           <span class="glyph">std::</span> C++ STL Revision
-        </a>
+        </button>
       </div>
     </div>
     <div class="rail">${cards}</div>
@@ -6014,6 +6311,103 @@ function renderQuestion(q, key, isOpen){
     </div>`;
 }
 
+function renderSTLItem(item, subName){
+  const key = item.id;
+  const isOpen = state.stl.openItems.has(key);
+  const isChecked = !!state.stl.checked[key];
+  let body = '';
+  if(isOpen){
+    body = `
+      <div class="stl-body">
+        ${item.flag ? `<div class="code-topic" style="color:var(--medium);">⚑ ${esc(item.flag)}</div>` : ''}
+        <p class="stl-expl">${esc(item.expl)}</p>
+        ${item.code ? `
+        <div class="code-wrap">
+          <button class="copy-btn" data-stl-copy="${key}">Copy</button>
+          <pre class="code-block"><code>${highlightCpp(item.code)}</code></pre>
+        </div>` : ''}
+        ${item.out ? `<div class="stl-out"><b>Output:</b> ${esc(item.out)}</div>` : ''}
+      </div>`;
+  }
+  return `
+    <div class="stl-row ${isOpen?'open':''} ${isChecked?'checked':''}" data-stl-item="${key}">
+      <div class="stl-row-head" data-stl-toggle="${key}">
+        <div class="stl-check" data-stl-check="${key}">${isChecked ? '✓' : ''}</div>
+        <div class="stl-term">${esc(item.term)}</div>
+        ${item.flag ? `<span class="stl-flag">⚑</span>` : ''}
+        <div class="q-arrow">›</div>
+      </div>
+      ${body}
+    </div>`;
+}
+
+function renderSTL(){
+  const query = state.stl.query.toLowerCase();
+
+  let totalItems = 0, doneItems = 0;
+  STL_DATA.forEach(sec => sec.subs.forEach(sub => sub.items.forEach(it => {
+    totalItems++;
+    if(state.stl.checked[it.id]) doneItems++;
+  })));
+
+  let anySectionShown = false;
+  const sectionsHtml = STL_DATA.map(sec => {
+    let anySubShown = false;
+    const subsHtml = sec.subs.map(sub => {
+      const items = sub.items.filter(it =>
+        !query || it.term.toLowerCase().includes(query) || it.expl.toLowerCase().includes(query)
+      );
+      if(items.length === 0) return '';
+      anySubShown = true;
+      const head = sub.name ? `
+        <div class="stl-sub-head">
+          <b>${esc(sub.name)}</b>
+          ${sub.tag ? `<span class="stl-tag">${esc(sub.tag)}</span>` : ''}
+          ${sub.done ? `<span class="stl-done">done</span>` : ''}
+        </div>` : '';
+      return `<div class="stl-sub">${head}${items.map(it => renderSTLItem(it, sub.name)).join('')}</div>`;
+    }).join('');
+    if(!anySubShown) return '';
+    anySectionShown = true;
+    return `
+      <div class="stl-section">
+        <div class="stl-section-head">
+          <span class="stl-dot" style="background:var(--${sec.color})"></span>
+          <h3>${esc(sec.title)}</h3>
+          <span class="tagline">${esc(sec.tagline)}</span>
+        </div>
+        ${subsHtml}
+      </div>`;
+  }).join('');
+
+  const body = anySectionShown ? sectionsHtml : `<div class="no-results">No terms match your search.</div>`;
+
+  return `
+    <div class="subhead">
+      <button class="back-btn" data-action="home">← All topics</button>
+      <h2>C++ STL — Revision Map</h2>
+      <div class="controls">
+        <button class="chip" data-stl-expand-all>Expand all</button>
+        <button class="chip" data-stl-collapse-all>Collapse all</button>
+        <button class="chip" data-stl-reset>Reset ticks</button>
+        <input class="search" placeholder="Search a method… e.g. lower_bound" value="${esc(state.stl.query)}" data-stl-search>
+      </div>
+    </div>
+    <div class="stl-progress-wrap">
+      <span class="stl-progress-label">${doneItems} / ${totalItems} revised</span>
+      <div class="stl-progress-track"><div class="stl-progress-fill" style="width:${totalItems ? (doneItems/totalItems*100) : 0}%"></div></div>
+    </div>
+    <div class="stl-legend">
+      <span><i style="background:var(--stl-seq)"></i>sequence</span>
+      <span><i style="background:var(--stl-adapt)"></i>adapters</span>
+      <span><i style="background:var(--stl-set)"></i>set family</span>
+      <span><i style="background:var(--stl-map)"></i>map family</span>
+      <span><i style="background:var(--stl-algo)"></i>algorithms</span>
+    </div>
+    ${body}
+  `;
+}
+
 /* ======================= HANDLERS ======================= */
 function attachHandlers(){
   document.querySelectorAll('[data-topic]').forEach(el => {
@@ -6025,6 +6419,9 @@ function attachHandlers(){
   });
   document.querySelectorAll('[data-action="home"]').forEach(el => {
     el.onclick = () => { state.view = 'home'; render(); };
+  });
+  document.querySelectorAll('[data-action="stl"]').forEach(el => {
+    el.onclick = () => { state.view = 'stl'; render(); };
   });
   document.querySelectorAll('[data-filter]').forEach(el => {
     el.onclick = () => { state.filter = el.dataset.filter; render(); };
@@ -6066,6 +6463,60 @@ function attachHandlers(){
           setTimeout(() => { el.textContent = 'Copy'; }, 1200);
         });
       }
+    };
+  });
+
+  /* ---- STL revision page handlers ---- */
+  document.querySelectorAll('[data-stl-toggle]').forEach(el => {
+    el.onclick = () => {
+      const key = el.dataset.stlToggle;
+      if(state.stl.openItems.has(key)) state.stl.openItems.delete(key);
+      else state.stl.openItems.add(key);
+      render();
+    };
+  });
+  document.querySelectorAll('[data-stl-check]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const key = el.dataset.stlCheck;
+      state.stl.checked[key] = !state.stl.checked[key];
+      render();
+    };
+  });
+  const stlSearchEl = document.querySelector('[data-stl-search]');
+  if(stlSearchEl){
+    stlSearchEl.oninput = (e) => {
+      state.stl.query = e.target.value;
+      render();
+      const el2 = document.querySelector('[data-stl-search]');
+      if(el2){ el2.focus(); el2.setSelectionRange(state.stl.query.length, state.stl.query.length); }
+    };
+  }
+  const stlExpandAll = document.querySelector('[data-stl-expand-all]');
+  if(stlExpandAll){
+    stlExpandAll.onclick = () => {
+      STL_DATA.forEach(sec => sec.subs.forEach(sub => sub.items.forEach(it => state.stl.openItems.add(it.id))));
+      render();
+    };
+  }
+  const stlCollapseAll = document.querySelector('[data-stl-collapse-all]');
+  if(stlCollapseAll){
+    stlCollapseAll.onclick = () => { state.stl.openItems.clear(); render(); };
+  }
+  const stlReset = document.querySelector('[data-stl-reset]');
+  if(stlReset){
+    stlReset.onclick = () => { state.stl.checked = {}; render(); };
+  }
+  document.querySelectorAll('[data-stl-copy]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const key = el.dataset.stlCopy;
+      let code = '';
+      STL_DATA.forEach(sec => sec.subs.forEach(sub => sub.items.forEach(it => { if(it.id === key) code = it.code; })));
+      navigator.clipboard.writeText(code).then(() => {
+        el.textContent = 'Copied';
+        setTimeout(() => { el.textContent = 'Copy'; }, 1200);
+      });
     };
   });
 }
