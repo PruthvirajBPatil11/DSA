@@ -200,11 +200,19 @@
   .stl-progress-track{flex:1;height:6px;border-radius:6px;background:var(--panel);border:1px solid var(--border);overflow:hidden;}
   .stl-progress-fill{height:100%;background:linear-gradient(90deg,var(--stl-seq),var(--stl-set));width:0%;transition:width .3s ease;}
 
-  .stl-section{margin-bottom:28px;}
-  .stl-section-head{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+  .stl-section{margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);overflow:hidden;}
+  .stl-section-head{
+    display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;user-select:none;
+  }
+  .stl-section-head:hover{background:var(--panel-2);}
+  .stl-section-chev{font-size:11px;color:var(--text-dim);transition:transform .2s ease;flex-shrink:0;}
+  .stl-section.open .stl-section-chev{transform:rotate(90deg);}
+  .stl-section-head h3{font-size:15px;margin:0;font-weight:600;flex-shrink:0;}
+  .stl-section-head .tagline{font-size:11.5px;color:var(--text-dim);flex:1;}
+  .stl-section-count{font-size:10.5px;color:var(--text-dim);background:var(--panel-2);padding:2px 8px;border-radius:20px;flex-shrink:0;}
+  .stl-section-body{display:none;padding:0 16px 16px;}
+  .stl-section.open .stl-section-body{display:block;}
   .stl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-  .stl-section-head h3{font-size:15px;margin:0;font-weight:600;}
-  .stl-section-head .tagline{font-size:11.5px;color:var(--text-dim);}
 
   .stl-sub{margin-bottom:14px;}
   .stl-sub-head{
@@ -6157,7 +6165,7 @@ next_permutation(v.begin(), v.end());`, out:'1 3 2' },
 
 /* ======================= STATE ======================= */
 let state = { view:'home', topicId:null, filter:'All', query:'', openQ:null, tab:{},
-  stl:{ query:'', openItems:new Set(), checked:{} } };
+  stl:{ query:'', openItems:new Set(), checked:{}, openSections:new Set([0]) } };
 
 /* ======================= HELPERS ======================= */
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -6351,7 +6359,7 @@ function renderSTL(){
   })));
 
   let anySectionShown = false;
-  const sectionsHtml = STL_DATA.map(sec => {
+  const sectionsHtml = STL_DATA.map((sec, secIdx) => {
     let anySubShown = false;
     const subsHtml = sec.subs.map(sub => {
       const items = sub.items.filter(it =>
@@ -6369,14 +6377,19 @@ function renderSTL(){
     }).join('');
     if(!anySubShown) return '';
     anySectionShown = true;
+    let secTotal = 0, secDone = 0;
+    sec.subs.forEach(sub => sub.items.forEach(it => { secTotal++; if(state.stl.checked[it.id]) secDone++; }));
+    const isOpen = query ? true : state.stl.openSections.has(secIdx);
     return `
-      <div class="stl-section">
-        <div class="stl-section-head">
+      <div class="stl-section ${isOpen?'open':''}">
+        <div class="stl-section-head" data-stl-section-toggle="${secIdx}">
+          <span class="stl-section-chev">›</span>
           <span class="stl-dot" style="background:var(--${sec.color})"></span>
           <h3>${esc(sec.title)}</h3>
           <span class="tagline">${esc(sec.tagline)}</span>
+          <span class="stl-section-count">${secDone}/${secTotal}</span>
         </div>
-        ${subsHtml}
+        <div class="stl-section-body">${subsHtml}</div>
       </div>`;
   }).join('');
 
@@ -6467,6 +6480,14 @@ function attachHandlers(){
   });
 
   /* ---- STL revision page handlers ---- */
+  document.querySelectorAll('[data-stl-section-toggle]').forEach(el => {
+    el.onclick = () => {
+      const idx = parseInt(el.dataset.stlSectionToggle);
+      if(state.stl.openSections.has(idx)) state.stl.openSections.delete(idx);
+      else state.stl.openSections.add(idx);
+      render();
+    };
+  });
   document.querySelectorAll('[data-stl-toggle]').forEach(el => {
     el.onclick = () => {
       const key = el.dataset.stlToggle;
@@ -6495,13 +6516,16 @@ function attachHandlers(){
   const stlExpandAll = document.querySelector('[data-stl-expand-all]');
   if(stlExpandAll){
     stlExpandAll.onclick = () => {
-      STL_DATA.forEach(sec => sec.subs.forEach(sub => sub.items.forEach(it => state.stl.openItems.add(it.id))));
+      STL_DATA.forEach((sec, idx) => {
+        state.stl.openSections.add(idx);
+        sec.subs.forEach(sub => sub.items.forEach(it => state.stl.openItems.add(it.id)));
+      });
       render();
     };
   }
   const stlCollapseAll = document.querySelector('[data-stl-collapse-all]');
   if(stlCollapseAll){
-    stlCollapseAll.onclick = () => { state.stl.openItems.clear(); render(); };
+    stlCollapseAll.onclick = () => { state.stl.openItems.clear(); state.stl.openSections.clear(); render(); };
   }
   const stlReset = document.querySelector('[data-stl-reset]');
   if(stlReset){
